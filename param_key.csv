@@ -1,0 +1,15 @@
+﻿param,description
+N,total sample size
+K,number of auxiliary variables
+r2_aux,proportion of variance explained in the outcome by the auxiliary variables
+p_pretest,proportion of sample exposed to the pretest
+p_treatment,proportion of sample exposed to the treatment
+beta0,intercept
+beta1,effect of the treatment when not exposed to the pretest
+beta2,effect of the pretest on the posttest
+beta3,effect of the baseline score on posttest when not exposed to pretest
+beta4,difference in treatment effect when exposed to pretest
+beta5,interaction between baseline score and treatment when not exposed to pretest
+beta6,interaction between baseline scores and exposure to the pretest for control condition
+beta7,"interaction between baseline scores, exposure to the pretest, and treatment effect"
+sigma,remaining variance in outcome after accounting for auxiliary variables

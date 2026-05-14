@@ -1,0 +1,22 @@
+project:
+  type: website
+  output-dir: docs
+  
+website:
+  title: "Measurement Reactivity"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - sim_v-jess.qmd
+
+format:
+  html:
+    theme:
+      - cosmo
+      - brand
+    css: styles.css
+    toc: true
+
+
+

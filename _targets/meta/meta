@@ -1,0 +1,29 @@
+name|type|data|command|depend|seed|path|time|size|bytes|format|repository|iteration|parent|children|seconds|warnings|error
+params_tidy_key|stem|83870ca90e19799d|b41495e79894b6b7|9d0f755966d1248e|-579540488||t20586.8718116129s|s259b|259|rds|local|vector|||0.75||
+estimate_plt|stem|65e522899e546073|7ff7c11be22ae036|7e08044b705dc208|289342946||t20586.8909838818s|s1794521b|1794521|rds|local|vector|||0.078||
+tidy_data|stem|be4ea1ff0e27834a|589892fc1f865a25|50d1b818a8f9919d|1848969542||t20586.8909726967s||207245|rds|local|vector|||0||no applicable method for 'unnest' applied to an object of class 'list'
+plt_estimates|function|4707a5e75e8ac1cc
+define_params|function|1b3accc2188525db
+init_params_tidy_key|function|d65fc70774efdb8c
+init_params|function|82efe204b1296e21
+.Random.seed|object|bc186e1df158e4a3
+fit_models|function|cbc489d29400e60a
+generate_data|function|5d284ece73eba47c
+plt_estimates_over_conditions|function|59a6cede40e2ca6e
+tidy_models|function|c9ac5f98170f1269
+simulate_over_conditions|function|ee60484c3ce808e4
+param_set|stem|eb50bd3024bbc699|90ddb19c35c6b4f9|fb922168f3ba6db9|1893177752||t20587.1234652893s|s219b|219|rds|local|vector|||0.937||
+params|stem|96d2352ee1bfc363|f7747b4454105612|cb94867ca37c7294|-675321759||t20587.1234666202s|s317b|317|rds|local|vector|||0||
+sim_data|stem|3bf936d67ef7f384|287709507d273f3c|a66272069d03e03c|552381520||t20587.1274027863s|s8546864b|8546864|rds|local|vector|||339.172||
+estimate_plts|stem|1d9e4550b63b2a57|431e9b4c1e177c60|af81d1d00b3ace8a|-342666574||t20587.1292994591s|s1434167489b|1434167489|rds|local|vector|||0.328||
+sim_v_jess|stem|552c34127b383f95|d35a954e4c881cc1|baefa00b85cc96b8|-2039373164|sim_v-jess.html*sim_v-jess_files*sim_v-jess.qmd|t20587.1047054185s||1108406|file|local|vector|||||Error resolving output location: missing files: docs/C:/Users/jessi/OneDrive - Georgia Institute of Technology/Atlas/Measurement Reactivity/measurement-reactivity/sim_v-jess.html
+plt_estimates|function|4707a5e75e8ac1cc
+define_params|function|1b3accc2188525db
+init_params_tidy_key|function|d65fc70774efdb8c
+init_params|function|82efe204b1296e21
+.Random.seed|object|76db5055c54e1885
+fit_models|function|cbc489d29400e60a
+generate_data|function|5d284ece73eba47c
+plt_estimates_over_conditions|function|59a6cede40e2ca6e
+tidy_models|function|c9ac5f98170f1269
+simulate_over_conditions|function|ee60484c3ce808e4

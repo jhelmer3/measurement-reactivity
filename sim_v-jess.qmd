@@ -1,0 +1,188 @@
+---
+title: "Basic Measurement Reactivity Simulation"
+subtitle: "Jess' Version"
+format: 
+  html:
+    code-fold: true
+editor: source
+---
+
+```{r}
+#| message: false
+library(tidyverse)
+library(patchwork)
+
+dag_labels <- c(y2 = "Post-Test Score",
+                y1 = "Pre-Test Score",
+                pretest = "Pre-Test Condition",
+                t = "Treatment",
+                t_y1 = "Treatment x Pre-Test Score",
+                pretest_t = "Pre-Test Condition x Treatment",
+                pretest_y1 = "Pre-Test Condition x Pre-Test Score",
+                pretest_t_y1 = "Pre-Test Condition x Treatment x Pre-Test Score",
+                u = "Unmeasured Factors") |>
+  str_wrap(20)
+
+node_size <- 30
+text_size <- 12
+```
+
+
+## Model Setup
+
+Let's imagine we have the following model for a treatment we want to estimate for a prettest-posttest design:
+
+$$ y_2 = \beta_0 + \beta_1 treatment + \beta_2 y_1 $$
+```{r}
+#| column: margin
+ggdag::dagify(y2 ~ y1,
+              y2 ~ t,
+              labels = dag_labels) |>
+  ggdag::ggdag(use_labels = "label",
+               node_size = node_size,
+               text_size = text_size) +
+  theme_void()
+```
+
+If we have measurement reactivity, the problem is that the act of taking the measurement at time 1 ($y_1$) acts as a confounder, meaning we can't know if $\beta_1$ might look different if $y_1$ were not measured.
+
+A standard solution might be to omit the prettest and just do a between-subjects comparison without any prettest as a covariate:
+
+$$ y_2 = \beta_0 + \beta_1 treatment $$
+
+```{r}
+#| column: margin
+ggdag::dagify(y2 ~ t,
+              labels = dag_labels) |>
+  ggdag::ggdag(use_labels = "label",
+               node_size = node_size,
+               text_size = text_size) +
+  theme_void()
+```
+
+One issue with this approach is that it is possible that baseline scores interact with the treatment, and that interaction becomes impossible to to measure. For example, it is possible that individuals with lower baseline scores may benefit more from the treatment than those with higher baseline scores, and this could not be measured with the just between-subjects condition.
+
+$$ y_2 = \beta_0 + \beta_1 treatment + \beta_2 y_1 + \beta_3 (treatment \times y_1) $$
+
+```{r}
+#| column: margin
+ggdag::dagify(y2 ~ y1,
+              y2 ~ t,
+              y2 ~ y1_t,
+              y1_t ~ t,
+              y1_t ~ y1,
+              labels = dag_labels) |>
+  ggdag::ggdag(use_labels = "label",
+               node_size = node_size,
+               text_size = text_size) +
+  theme_void()
+```
+
+Our approach uses a planned missingness design, where participants are randomized into a design where $y_1$ measurements are either observed or missing, and Type B auxiliary variables are used to impute the missing values, eliminating the effect of measurement reactivity.
+
+I sketched out a simple simulation with the following data generating model:
+
+::: math
+\begin{aligned}
+  y_{2} = \beta_0 &+ \beta_1 treatment + \beta_2 prettest  + \beta_3 y_{1} \\
+  & + \beta_4(treatment \times prettest) + \beta_5 (treatment_i \times y_{1}) + \beta_6 (prettest_i \times y_{1}) \\
+  & + \beta_7 (treatment \times prettest \times y_{1}) + \epsilon_{y2}
+\end{aligned}
+:::
+
+```{r}
+#| column: margin
+ggdag::dagify(y2 ~ u,
+              y2 ~ y1 + t + pretest + t_y1 + pretest_t + pretest_y1 + pretest_t_y1,
+              t_y1 ~ t + y1,
+              pretest_t ~ pretest + t,
+              pretest_y1 ~ pretest + y1,
+              pretest_t_y1 ~ pretest + t + y1,
+              labels = dag_labels,
+              coords = list(x = c(u = 3.5,
+                                  y2 = 3, 
+                                  pretest_t_y1 = 1.5, 
+                                  pretest_y1 = 0.75, pretest_t = 0.75, t_y1 = 0.75,
+                                  t = 0, pretest = 0, y1 = 0),
+                            y = c(u = 0,
+                                  y2 = 0, 
+                                  pretest_t_y1 = 0, 
+                                  pretest_y1 = 0.75, pretest_t = 0, t_y1 = -0.75,
+                                  t = -1, pretest = 0, y1 = 1))
+              ) |>
+  ggdag::ggdag(use_labels = "label",
+               node_size = node_size,
+               text_size = 4) +
+  theme_void()
+```
+
+-   $K$ is the number of auxiliary variables
+
+-   $N$ is the total sample size
+
+-   $treatment$ is the treatment condition (0 or 1)
+
+-   $prettest$ is the measurement condition (0 or 1)
+
+-   $y_1$ is prettest measurement
+
+-   $y_2$ is posttest measurement
+
+-   $n_{pre}$ is the sample size in the prettest condition
+
+-   $\beta_1$ is the effect of the treatment (compared to control) when there is no pretest at the average baseline score ($y_1$)
+
+-   $\beta_2$ is the effect of the prettest being elicited on the posttest in the control condition (no target treatment) at the average baseline score ($y_1$)
+
+-   $\beta_3$ is the effect of the prettest score on posttest (set to 1 for simplicity) in the control condition when there is no prettest
+
+-   $\beta_4$ is the difference in treatment effect (change in $\beta_1$) when the prettest is taken (vs when it is not) at the average baseline score ($y_1$)
+
+-   $\beta_5$ is the change in the effect of the treatment ($\beta_1$) for one unit increase in baseline score ($y_1$) when the prettest is not taken.
+
+-   $\beta_6$ is the change in the effect of the prettest ($\beta_2$) for one unit increase in baseline score ($y_1$) when the in the control condition
+
+-   $\beta_7$ is the change in the change the effect of treatment for one unit increase in baseline score ($\beta_5$) when the prettest is taken
+
+-   $R^2_{aux}$ is the proportion of variance in $y_1$ explained by auxiliary variables
+
+
+The data generating process is based on
+
+$$ \boldsymbol{aux} \sim MVN(\boldsymbol{0}, \boldsymbol{I}) $$ 
+
+**NOTE:** for now this implies predictors are independent. We should manipulate this!
+
+$$ y_{1,i} = \sum aux_i + \epsilon_{impute,i} $$
+
+where $\sigma_{\epsilon_{impute,i}} = K\frac{1-R^2_{aux}}{R^2_{aux}}$
+
+::: {.callout-note collapse="true"}
+### Relationship Among $\sigma$, $K$, and $R^2$
+
+```{r}
+#| fig-height: 4
+#| out-width: 100%
+tibble(r2 = seq(.1, .9, length.out = 50),
+       sigma = map(r2, \(r2) tibble(K = 1:5,
+                                    sigma = K * (1 - r2) / r2))) |>
+  unnest(sigma) |>
+  ggplot(aes(x = r2, y = sigma)) +
+  geom_line() +
+  facet_wrap(~ K, nrow = 1, labeller = "label_both") +
+  guides(x = guide_axis(cap = T),
+         y = guide_axis(cap = T)) +
+  theme_classic() +
+  theme(aspect.ratio = 1)
+```
+:::
+
+
+```{r}
+#| column: screen
+#| fig-width: 18
+targets::tar_read(estimate_plts) |>
+  wrap_plots(nrow = 1) & 
+  theme(plot.margin = unit(c(0, 30, 0, 30), "pt"))
+```
+
