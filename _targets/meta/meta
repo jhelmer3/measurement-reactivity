@@ -1,29 +1,25 @@
 name|type|data|command|depend|seed|path|time|size|bytes|format|repository|iteration|parent|children|seconds|warnings|error
-params_tidy_key|stem|83870ca90e19799d|b41495e79894b6b7|9d0f755966d1248e|-579540488||t20586.8718116129s|s259b|259|rds|local|vector|||0.75||
 estimate_plt|stem|65e522899e546073|7ff7c11be22ae036|7e08044b705dc208|289342946||t20586.8909838818s|s1794521b|1794521|rds|local|vector|||0.078||
 tidy_data|stem|be4ea1ff0e27834a|589892fc1f865a25|50d1b818a8f9919d|1848969542||t20586.8909726967s||207245|rds|local|vector|||0||no applicable method for 'unnest' applied to an object of class 'list'
-plt_estimates|function|4707a5e75e8ac1cc
+clear|stem|3059894868f4c2f8|42da0da1aab6d55c|c8b14db9c6cd569c|-1158376820||t20587.6635025063s|s48b|48|rds|local|vector|||1.031||
+.Random.seed|object|4d0b0b78621004f9
+estimate_plts_file|stem|090f244d89adb666|c3b6e5c481cdd739|8506919eec9922fb|1752171130|C:/Users/jessi/OneDrive - Georgia Institute of Technology/Atlas/Measurement Reactivity/measurement-reactivity/figures/estimate_plts.png|t20591.7850087973s|s475255b|475255|file|local|vector|||6.484|Removed 3 rows containing missing values or values outside the scale range (`geom_line()`).. Removed 3 rows containing missing values or values outside the scale range (`geom_line()`).|
+sim_v_jess|stem|56bd85ab3578a19b|23bcda3d54a4e0fc|7b4a56f21d25fac4|-2039373164|docs/reports/sim_v-jess.html*reports/sim_v-jess.qmd|t20591.8202202209s|s69172b|69172|file|local|vector|||70.14||
+estimate_plts_patch|stem|1772583c8b806f6f|a305308ca408664e|0df2dc6fb20b74eb|505108692||t20591.8447100934s|s846822967b|846822967|qs|local|vector|||4.296||
+param_set|stem|af5806e0cf3cc3c3|7ab0096e26ebc6a8|a2cebf59b44f9e64|1893177752||t20591.8256597222s|s217b|217|rds|local|vector|||0.829||
+params_tidy_key|stem|83870ca90e19799d|b41495e79894b6b7|9d0f755966d1248e|-579540488||t20586.8718055556s|s259b|259|rds|local|vector|||0.75||
+params|stem|2804ebe509387310|f7747b4454105612|68d2d5542a79c573|-675321759||t20591.8256597222s|s314b|314|rds|local|vector|||0.015||
+patch_estimate_plts|function|47ae6e9644b327f1
+init_method_levels|function|b78424d2134f1850
+plt_estimates|function|3ceb885a39fbabd6
 define_params|function|1b3accc2188525db
 init_params_tidy_key|function|d65fc70774efdb8c
-init_params|function|82efe204b1296e21
-.Random.seed|object|bc186e1df158e4a3
+init_params|function|8908a170541d31d6
 fit_models|function|cbc489d29400e60a
+clear_workers|function|915eec6cf5bd4dde
 generate_data|function|5d284ece73eba47c
-plt_estimates_over_conditions|function|59a6cede40e2ca6e
-tidy_models|function|c9ac5f98170f1269
-simulate_over_conditions|function|ee60484c3ce808e4
-param_set|stem|eb50bd3024bbc699|90ddb19c35c6b4f9|fb922168f3ba6db9|1893177752||t20587.1234652893s|s219b|219|rds|local|vector|||0.937||
-params|stem|96d2352ee1bfc363|f7747b4454105612|cb94867ca37c7294|-675321759||t20587.1234666202s|s317b|317|rds|local|vector|||0||
-sim_data|stem|3bf936d67ef7f384|287709507d273f3c|a66272069d03e03c|552381520||t20587.1274027863s|s8546864b|8546864|rds|local|vector|||339.172||
-estimate_plts|stem|1d9e4550b63b2a57|431e9b4c1e177c60|af81d1d00b3ace8a|-342666574||t20587.1292994591s|s1434167489b|1434167489|rds|local|vector|||0.328||
-sim_v_jess|stem|552c34127b383f95|d35a954e4c881cc1|baefa00b85cc96b8|-2039373164|sim_v-jess.html*sim_v-jess_files*sim_v-jess.qmd|t20587.1047054185s||1108406|file|local|vector|||||Error resolving output location: missing files: docs/C:/Users/jessi/OneDrive - Georgia Institute of Technology/Atlas/Measurement Reactivity/measurement-reactivity/sim_v-jess.html
-plt_estimates|function|4707a5e75e8ac1cc
-define_params|function|1b3accc2188525db
-init_params_tidy_key|function|d65fc70774efdb8c
-init_params|function|82efe204b1296e21
-.Random.seed|object|76db5055c54e1885
-fit_models|function|cbc489d29400e60a
-generate_data|function|5d284ece73eba47c
-plt_estimates_over_conditions|function|59a6cede40e2ca6e
-tidy_models|function|c9ac5f98170f1269
-simulate_over_conditions|function|ee60484c3ce808e4
+plt_estimates_over_conditions|function|550e7e4aa27e08ca
+tidy_models|function|7ccd50e6ee0171b8
+simulate_over_conditions|function|4bcb30b415e2fedc
+sim_data|stem|d76784d49aaa9d86|287709507d273f3c|f0e5decaaf2f4d61|552381520||t20591.8689400177s|s6733323b|6733323|rds|local|vector|||745.516||
+estimate_plts|stem|ba85e36223cf0cf0|431e9b4c1e177c60|0505c3900d46547d|-342666574||t20591.8430417341s||760211518|qs|local|vector|||||Error storing output: there is no package called 'qs2'

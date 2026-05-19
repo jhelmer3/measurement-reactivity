@@ -5,12 +5,16 @@ format:
   html:
     code-fold: true
 editor: source
+html-table-processing: none
 ---
+
 
 ```{r}
 #| message: false
+library(targets)
 library(tidyverse)
 library(patchwork)
+library(gt)
 
 dag_labels <- c(y2 = "Post-Test Score",
                 y1 = "Pre-Test Score",
@@ -177,12 +181,32 @@ tibble(r2 = seq(.1, .9, length.out = 50),
 ```
 :::
 
+## Simulation
+
+### Parameters
+
+```{r}
+param_set <- tar_read(param_set, store = here::here("_targets"))
+
+param_set |>
+  enframe() |>
+  pivot_wider(names_from = name, values_from = value) |>
+  gt() |>
+  tab_style(cell_text(weight = "bold"),
+            cells_column_labels())
+
+n_conditions <- param_set |> map(length) |> reduce(`*`)
+```
+
+This combination of parameters results in `r param_set$rep` replications of `r n_conditions` conditions.
 
 ```{r}
 #| column: screen
 #| fig-width: 18
-targets::tar_read(estimate_plts) |>
-  wrap_plots(nrow = 1) & 
-  theme(plot.margin = unit(c(0, 30, 0, 30), "pt"))
+#| fig-height: 6
+tar_read(estimate_plts_patch, store = here::here("_targets"))
 ```
+
+
+
 

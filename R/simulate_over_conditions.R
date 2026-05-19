@@ -1,6 +1,7 @@
 
 simulate_over_conditions <- function(params) {
-    params |>
+  
+  sim_data <- params |>
       pmap(
         \(...) tibble(...) |>
           # repeats each set of parameters for each replication
@@ -10,6 +11,8 @@ simulate_over_conditions <- function(params) {
           fit_models() |>
           tidy_models()
       )
+  
+  sim_data
 }
 
 # tar_read(params) |>

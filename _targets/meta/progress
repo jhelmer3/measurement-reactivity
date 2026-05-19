@@ -2,6 +2,7 @@ name|type|parent|branches|progress
 param_set|stem|param_set|0|skipped
 params_tidy_key|stem|params_tidy_key|0|skipped
 params|stem|params|0|skipped
-sim_data|stem|sim_data|0|skipped
-estimate_plts|stem|estimate_plts|0|skipped
-sim_v_jess|stem|sim_v_jess|0|dispatched
+sim_data|stem|sim_data|0|dispatched
+sim_data|stem|sim_data|0|completed
+estimate_plts|stem|estimate_plts|0|dispatched
+estimate_plts|stem|estimate_plts|0|errored

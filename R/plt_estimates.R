@@ -1,30 +1,56 @@
 
-plt_estimates <- function(data) {
+plt_estimates <- function(data, axis_limits, method_levels) {
   
   plt_title <- glue::glue("N: {data |> pluck('params', 1, 'N')}")
   
-  data |>
+  tidy <- data |>
     unnest(tidy) |>
-    ggplot(aes(x = type, y = estimate, color = type, fill = type)) +
-    geom_hline(aes(yintercept = true_value)) +
-    geom_violin(color = NA, alpha = .6) +
-    geom_jitter(height = 0, alpha = .4, shape = 16) +
-    facet_wrap(~ term, scales = "free_y") +
-    guides(y = guide_axis("Estimate", cap = T),
-           color = guide_none(),
-           fill = guide_none()) +
-    scale_x_discrete("Model",
-                     breaks = c("lm_true", "lm_pretest", "lm_between"),
-                     labels = c("lm_true" = "true",
-                                "lm_pretest" = "pretest",
-                                "lm_between" = "between")) +
-    labs(title = plt_title) +
-    theme_classic(base_size = 12) +
-    theme(strip.background = element_blank(),
-          strip.text = element_text(face = "bold"),
-          plot.title = element_text(hjust = 0.5))
+    mutate(method = factor(method, method_levels$method))
+  
+  true_values <- crossing(method = method_levels$method,
+                          tidy |>
+                            select(term) |>
+                            unique()) |>
+    inner_join(tidy |>
+                 select(term, true_value) |> unique(),
+               by = "term") 
+  
+  tidy |>
+    group_split(term) |>
+    map(\(data) data |>
+          ggplot(aes(x = method, y = estimate, color = method, fill = method)) +
+          geom_line(data = true_values |>
+                      filter(term == first(data$term)),
+                    aes(y = true_value, x = method, group = term),
+                    color = "black") +
+          geom_violin(color = NA, alpha = .6) +
+          geom_jitter(height = 0, alpha = .3, shape = 16) +
+          guides(y = guide_axis(NULL, cap = T),
+                 x = guide_axis(cap = T),
+                 color = guide_none(),
+                 fill = guide_none()) +
+          scale_x_discrete(NULL,
+                           breaks = method_levels$method,
+                           labels = method_levels$label) +
+          scale_color_manual(values = method_levels |>
+                               select(method, color) |>
+                               deframe(),
+                             aesthetics = c("color", "fill")) +
+          coord_cartesian(ylim = axis_limits |>
+                            filter(term == first(data$term)) |>
+                            select(min_est, max_est) |>
+                            reduce(c),
+                          clip = "off") +
+          labs(title = first(data$term)) +
+          theme_classic(base_size = 12) +
+          theme(strip.background = element_blank(),
+                strip.text = element_text(face = "bold"),
+                plot.title = element_text(size = 10, hjust = 0.5))) |>
+    wrap_plots() +
+    plot_annotation(title = plt_title,
+                    theme = theme(plot.title = element_text(hjust = 0.5)))
 }
 
 # tar_read(sim_data) |>
-#   pluck(1) |>
-#   plt_estimates()
+#   plt_estimates_over_conditions()
+

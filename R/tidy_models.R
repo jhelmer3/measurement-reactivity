@@ -3,7 +3,7 @@ tidy_models <- function(data) {
   data |>
     unnest(lms) |>
     pivot_longer(starts_with("lm"),
-                 names_to = "type", values_to = "lm_result") |>
+                 names_to = "method", values_to = "lm_result") |>
     mutate(
       tidy = map2(
         lm_result, params,
@@ -21,8 +21,8 @@ tidy_models <- function(data) {
           
           broom::tidy(lm_result) |>
             bind_rows(tibble(sigma = sigma(lm_result),
-                             cohens_d = pluck(lm_result, "coefficients", "treatment") / sigma(lm_result),
-                             diff = cohens_d - (params$beta1 / sigma),
+                             cohens_d = pluck(lm_result, "coefficients", "treatment") / sigma,
+                             diff = cohens_d - (params$beta1 / params$sigma),
                              diff_squared = diff^2) |>
                         pivot_longer(everything(), 
                                      names_to = "term", values_to = "estimate")) |>
@@ -32,7 +32,7 @@ tidy_models <- function(data) {
       )) |>
     unnest(tidy) |>
     select(-c(lm_result, std.error, statistic, p.value)) |>
-    nest(tidy = c(type, term, estimate, true_value))
+    nest(tidy = c(method, term, estimate, true_value))
 }
 
 # tar_read(sim_data) |>

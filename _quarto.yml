@@ -8,7 +8,7 @@ website:
     left:
       - href: index.qmd
         text: Home
-      - sim_v-jess.qmd
+      - reports/sim_v-jess.qmd
 
 format:
   html:
