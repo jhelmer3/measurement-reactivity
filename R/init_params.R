@@ -2,7 +2,7 @@
 init_params <- function(n_reps) {
   return(
     list(
-      rep = n_reps,
+      n_reps = n_reps,
       N = c(100, 400),
       K = 3,
       r2_aux = .33,

@@ -1,16 +1,13 @@
 
-generate_data <- function(condition_params) {
-  
-  condition_params |>
-    group_split(rep) |>
-    map(in_parallel(\(data) {
-      
+generate_data <- function(params_rep) {
+  params_rep |>
+    group_split(condition_id) |>
+    map(\(data) {
       n_pretest <- round(data$N * data$p_pretest)
       n_treatment <- round(data$N * data$p_treatment)
-      
-      
+
       data |>
-        tidyr::nest(params = -rep) |>
+        tidyr::nest(params = -condition_id) |>
         tidyr::uncount(data$N) |>
         dplyr::mutate(
           id = dplyr::row_number(),
@@ -47,11 +44,15 @@ generate_data <- function(condition_params) {
                               tidyr::pivot_wider(names_from = condition,
                                                  values_from = y2, names_prefix = "y2"))) |>
         tidyr::unnest(y2s) |>
-        tidyr::nest(data = -c(rep, params))
+        tidyr::nest(data = -c(condition_id, params))
       
-    })) |>
+    }) |>
     list_rbind()
 }
+
+# tar_read(params) |>
+#   generate_data() |>
+#   fit_models()
 
 
 # generate_data <- function(condition_params) {

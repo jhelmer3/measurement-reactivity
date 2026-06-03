@@ -204,7 +204,12 @@ This combination of parameters results in `r param_set$rep` replications of `r n
 #| column: screen
 #| fig-width: 18
 #| fig-height: 6
-tar_read(estimate_plts_patch, store = here::here("_targets"))
+#| layout-ncol: 2
+tar_read(estimate_plt_files, store = here::here("_targets")) |>
+  unlist() |>
+  here::here() |>
+  normalizePath(winslash = "/") |>
+  knitr::include_graphics()
 ```
 
 

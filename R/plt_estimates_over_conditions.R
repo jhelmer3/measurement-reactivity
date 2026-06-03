@@ -1,18 +1,11 @@
 
-plt_estimates_over_conditions <- function(sim_data) {
-  axis_limits <- sim_data |>
-    map(\(data) data |>
-          unnest(tidy)) |>
-    list_rbind() |> 
-    summarize(.by = term,
-              max_est = max(estimate),
-              min_est = min(estimate))
-  
+plt_estimates_over_conditions <- function(sim_data, axis_limits) {
   method_levels <- init_method_levels()
   
-  sim_data |>
-    map(\(sim_data) plt_estimates(sim_data, axis_limits, method_levels))
+  plt_estimates(sim_data, axis_limits, method_levels)
 }
+
+tar_read(sim_data)
 # 
 # tar_read(sim_data) |>
 #   plt_estimates_over_conditions()

@@ -1,6 +1,5 @@
 
 fit_models <- function(data) {
-  return(
     data |>
       mutate(lms = map(data, 
                        \(data) tibble(
@@ -9,7 +8,6 @@ fit_models <- function(data) {
                          lm_true = list(lm(y2 ~  y1_z * treatment * pretest, data = data))
                        )))
     
-  )
 }
 # 
 # tar_read(params) |>
