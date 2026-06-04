@@ -1,13 +1,11 @@
 
 tidy_models <- function(data) {
   data |>
-    unnest(lms) |>
-    pivot_longer(starts_with("lm"),
-                 names_to = "method", values_to = "lm_result") |>
+    unnest(models) |>
     mutate(
       tidy = map2(
-        lm_result, params,
-        \(lm_result, params) {
+        result, params,
+        \(result, params) {
           key <- params |>
             pivot_longer(everything(),
                          names_to = "term", values_to = "true_value") |>
@@ -19,21 +17,22 @@ tidy_models <- function(data) {
                               "diff", 0,
                               "diff_squared", 0))
           
-          broom::tidy(lm_result) |>
-            bind_rows(tibble(sigma = sigma(lm_result),
-                             cohens_d = pluck(lm_result, "coefficients", "treatment") / sigma,
-                             diff = cohens_d - (params$beta1 / params$sigma),
-                             diff_squared = diff^2) |>
-                        pivot_longer(everything(), 
-                                     names_to = "term", values_to = "estimate")) |>
+          {if (class(result) == "lm") tidy_lm(result, params)
+            else if (class(result) == "frm_em") tidy_frm_em(result, params)} |>
+            # pivot_longer(everything(), 
+            #              names_to = "term", values_to = "estimate") |>
             mutate(true_value = recode_values(term,
                                               from = key$true_values_term,
                                               to = key$true_value))}
       )) |>
     unnest(tidy) |>
-    select(-c(lm_result, std.error, statistic, p.value)) |>
     nest(tidy = c(method, term, estimate, true_value))
 }
+
+# tar_read(params) |>
+#   generate_data() |>
+#   fit_models() |>
+#   tidy_models()
 
 # tar_read(sim_data) |>
 #   tidy_models()

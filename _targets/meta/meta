@@ -1,40 +1,57 @@
 name|type|data|command|depend|seed|path|time|size|bytes|format|repository|iteration|parent|children|seconds|warnings|error
-estimate_plt|stem|65e522899e546073|7ff7c11be22ae036|7e08044b705dc208|289342946||t20586.8909838818s|s1794521b|1794521|rds|local|vector|||0.078||
-tidy_data|stem|be4ea1ff0e27834a|589892fc1f865a25|50d1b818a8f9919d|1848969542||t20586.8909726967s||207245|rds|local|vector|||0||no applicable method for 'unnest' applied to an object of class 'list'
-clear|stem|3059894868f4c2f8|42da0da1aab6d55c|c8b14db9c6cd569c|-1158376820||t20587.6635025063s|s48b|48|rds|local|vector|||1.031||
-.Random.seed|object|4d0b0b78621004f9
-estimate_plts_file|stem|090f244d89adb666|c3b6e5c481cdd739|8506919eec9922fb|1752171130|C:/Users/jessi/OneDrive - Georgia Institute of Technology/Atlas/Measurement Reactivity/measurement-reactivity/figures/estimate_plts.png|t20591.7850087973s|s475255b|475255|file|local|vector|||6.484|Removed 3 rows containing missing values or values outside the scale range (`geom_line()`).. Removed 3 rows containing missing values or values outside the scale range (`geom_line()`).|
 sim_data_batch|stem|3b308b52682988ae|1fc1de8632a17e77|2c530c1562a7fbd1|-1041852257||t20607.0162148207s|s99b|99|rds|local|vector||sim_data_batch_6e95f3b2b5476d92*sim_data_batch_b3a2147ad240fae3*sim_data_batch_f5968f8186dadba0*sim_data_batch_50003b5d5254d75e|0||
 param_set|stem|095dfe93e82e9bfb|1b06cf831364e026|285cac8d22b51047|1893177752||t20607.0376337232s|s261b|261|qs|local|vector|||0.922||
-params_tidy_key|stem|5c5e709b6845ed18|b41495e79894b6b7|9d0f755966d1248e|-579540488||t20607.0376337232s|s305b|305|qs|local|vector|||0.922||
 params|stem|8ac65cee1a27c76e|f7747b4454105612|1c384d77eea17503|-675321759||t20607.0376346341s|s420b|420|qs|local|vector|||0.015||
-sim_data_256738fbef5c4c27|branch|295dbe80284a05aa|bcfa5d0912189ddd|725c829f7cdf297a|1166227068||t20607.038081711s|s155735b|155735|qs|local|vector|sim_data||37.766||
-sim_data_cbc7c5d5add53a96|branch|3c210a0910230bf9|bcfa5d0912189ddd|725c829f7cdf297a|1182136416||t20607.0380885035s|s155694b|155694|qs|local|vector|sim_data||38.344||
-sim_data_f429689dc84384dc|branch|d1515633e8c9d38e|bcfa5d0912189ddd|725c829f7cdf297a|-633122215||t20607.0381034465s|s155618b|155618|qs|local|vector|sim_data||38.109||
-sim_data_c5487d0bc9295a02|branch|4acae137e630e461|bcfa5d0912189ddd|725c829f7cdf297a|-1381505420||t20607.0381101137s|s155786b|155786|qs|local|vector|sim_data||38.704||
-sim_data|pattern|7ddd1d928628c019|bcfa5d0912189ddd||552381520||||622833|qs|local|vector||sim_data_cbc7c5d5add53a96*sim_data_256738fbef5c4c27*sim_data_c5487d0bc9295a02*sim_data_f429689dc84384dc|152.923||
-axis_limits|stem|67f35304f82126b9|1380ee6670d77e9d|df9b57f4a66d3806|-879560442||t20607.0418141497s|s521b|521|qs|local|vector|||0.016||
-sim_data_grouped|stem|64f35928ae7fb55d|efdfee211fb8b98a|7bd5b2a7761f32d6|-618810811||t20607.042095021s|s618907b|618907|qs|local|group||sim_data_grouped_464aa9e36a112c26*sim_data_grouped_17cf105c7eb2d8d7|0.093||
 estimate_plts_a3d9e1becc9f058a|branch|c5a06f37e453e904|d10f55e620961345|31778cdac457938b|-975277191||t20607.0453142756s|s76309839b|76309839|qs|local|list|estimate_plts||1.984||
 estimate_plts_42650ba2507f16e7|branch|c5a06f37e453e904|d10f55e620961345|31778cdac457938b|31861968||t20607.0453144672s|s76309839b|76309839|qs|local|list|estimate_plts||2||
-estimate_plts|pattern|f0515ee5c4100e7b|d10f55e620961345||-342666574||||152619678|qs|local|list||estimate_plts_a3d9e1becc9f058a*estimate_plts_42650ba2507f16e7|3.984||
-estimate_plts_patch|stem|1772583c8b806f6f|a305308ca408664e|6aca1cc9211ddee0|505108692||t20591.8447100934s||846822967|qs|local|vector|||0.094||ℹ In index: 1. ℹ With name: estimate_plts_a3d9e1becc9f058a. Caused by error in `idx %% 2`: ! non-numeric argument to binary operator
-estimate_plt_files|pattern|b7911b22bde5a4f3|f46c6571d34bd3ba||-2139798580||||882860|file|local|list||estimate_plt_files_42dd3f399a3c6fd6*estimate_plt_files_cd51e9785937ada5|12.546||
 estimate_plt_files_cd51e9785937ada5|branch|32424f920fd5a228|f46c6571d34bd3ba|7d983e329726bd72|1346892279|outputs/estimate_plt_estimate_plt_files_cd51e9785937ada5.png|t20607.0686057702s|s442276b|442276|file|local|list|estimate_plt_files||4.329||
 estimate_plt_files_42dd3f399a3c6fd6|branch|180467c7f8a8a707|f46c6571d34bd3ba|6d8d012fac048454|1691515387|outputs/estimate_plt_estimate_plt_files_42dd3f399a3c6fd6.png|t20607.0686059098s|s440584b|440584|file|local|list|estimate_plt_files||4.329||
+estimate_plts_16308190c5da9829|branch|c2f55ef43cd3ede7|d10f55e620961345|a607791401de57c0|-503491641||t20608.0314398614s|s229482225b|229482225|qs|local|list|estimate_plts||1.438||
+estimate_plts_f8b34af822ad966f|branch|c2f55ef43cd3ede7|d10f55e620961345|a607791401de57c0|-947957583||t20608.0314479649s|s229482225b|229482225|qs|local|list|estimate_plts||1.344||
+estimate_plt_files_db6d04e1b21703db|branch|db34994ff12a80dc|f46c6571d34bd3ba|bb4dfeb821d919f8|-240520417|outputs/estimate_plt_estimate_plt_files_db6d04e1b21703db.png|t20608.0316000721s|s440731b|440731|file|local|list|estimate_plt_files||3.672||
+estimate_plt_files_e9961226030b0488|branch|5347ff9d840f41bc|f46c6571d34bd3ba|bf9ce1a7787fecce|1756434630|outputs/estimate_plt_estimate_plt_files_e9961226030b0488.png|t20608.0316003835s|s440341b|440341|file|local|list|estimate_plt_files||4.328||
+estimate_plts_917eb2091b95b1d2|branch|1e0e4da8eeb89750|d10f55e620961345|8be7cfead9fd3a4a|1258187710||t20608.7935518016s|s506906357b|506906357|qs|local|list|estimate_plts||3.532||
+estimate_plts_6f5765115ad01787|branch|1e0e4da8eeb89750|d10f55e620961345|8be7cfead9fd3a4a|-945861390||t20608.7935523276s|s506906357b|506906357|qs|local|list|estimate_plts||3.672||
+estimate_plt_files_a02d183c18b43c90|branch|dea336e5f4920496|f46c6571d34bd3ba|f9ec5e1177e983b7|912166446|outputs/estimate_plt_estimate_plt_files_a02d183c18b43c90.png|t20608.7939504797s|s555497b|555497|file|local|list|estimate_plt_files||8.5|Removed 4 rows containing missing values or values outside the scale range (`geom_line()`).. Removed 4 rows containing missing values or values outside the scale range (`geom_line()`).. Removed 4 rows containing missing values or values outside the scale range (`geom_line()`).. Removed 4 rows containing missing values or values outside the scale range (`geom_line()`).|
+estimate_plt_files_96b15a8fcf779afa|branch|c8bcc81b46625251|f46c6571d34bd3ba|4ec14104295ecf25|1550945596|outputs/estimate_plt_estimate_plt_files_96b15a8fcf779afa.png|t20608.7939776062s|s553275b|553275|file|local|list|estimate_plt_files||10.172|Removed 4 rows containing missing values or values outside the scale range (`geom_line()`).. Removed 4 rows containing missing values or values outside the scale range (`geom_line()`).. Removed 4 rows containing missing values or values outside the scale range (`geom_line()`).. Removed 4 rows containing missing values or values outside the scale range (`geom_line()`).|
+estimate_plts_4863321a556ab32a|branch|602459070ff1bbf3|d10f55e620961345|10df4e83cd803486|1702814224||t20608.8006788879s|s499706104b|499706104|qs|local|list|estimate_plts||2.078||
+estimate_plts_d39188f4e9dbe741|branch|602459070ff1bbf3|d10f55e620961345|10df4e83cd803486|-154742413||t20608.800690871s|s499706104b|499706104|qs|local|list|estimate_plts||1.922||
+estimate_plt_files_927d52a938ad8c94|branch|d4a9e496ddf2cc53|f46c6571d34bd3ba|3e6d303987104382|-2032610502|outputs/estimate_plt_estimate_plt_files_927d52a938ad8c94.png|t20608.801047425s|s548776b|548776|file|local|list|estimate_plt_files||4.75|Removed 4 rows containing missing values or values outside the scale range (`geom_line()`).. Removed 4 rows containing missing values or values outside the scale range (`geom_line()`).. Removed 4 rows containing missing values or values outside the scale range (`geom_line()`).|
+estimate_plt_files_195644aace9bbda5|branch|67df563e77d58881|f46c6571d34bd3ba|b8b8525a793b88bd|1910309981|outputs/estimate_plt_estimate_plt_files_195644aace9bbda5.png|t20608.8010530148s|s550059b|550059|file|local|list|estimate_plt_files||6.671|Removed 4 rows containing missing values or values outside the scale range (`geom_line()`).. Removed 4 rows containing missing values or values outside the scale range (`geom_line()`).. Removed 4 rows containing missing values or values outside the scale range (`geom_line()`).|
+estimate_plts_5c66b52ad11a760b|branch|6c1481b3bd4e6f6f|fae06f57bc696c94|701f66704e1da711|1983063857||t20608.8115881472s|s112484814b|112484814|qs|local|list|estimate_plts||1.61||
+estimate_plts_c8e8ea7352746cb8|branch|07a3e30f1fd20c63|fae06f57bc696c94|701f66704e1da711|1478864356||t20608.8116547353s|s364068153b|364068153|qs|local|list|estimate_plts||1.844||
+estimate_plt_files_29a67189edf9102e|branch|1f01ff7b15e3daf4|8662b2203395fd9c|64fb67354cd010bf|863767744|outputs/estimate_plt_estimate_plt_files_29a67189edf9102e.png|t20608.811692516s|s450626b|450626|file|local|list|estimate_plt_files||2.437|Removed 4 rows containing missing values or values outside the scale range (`geom_line()`).. Removed 4 rows containing missing values or values outside the scale range (`geom_line()`).. Removed 4 rows containing missing values or values outside the scale range (`geom_line()`).|
+estimate_plt_files_ec189de5c335d6bf|branch|6b236bae260b28ba|8662b2203395fd9c|17f1630c1dff5234|-1122737234|outputs/estimate_plt_estimate_plt_files_ec189de5c335d6bf.png|t20608.8118322264s|s402259b|402259|file|local|list|estimate_plt_files||2.172|Removed 4 rows containing missing values or values outside the scale range (`geom_line()`).. Removed 4 rows containing missing values or values outside the scale range (`geom_line()`).. Removed 4 rows containing missing values or values outside the scale range (`geom_line()`).|
 n_reps|object|6347f0df4a6e5234
 patch_estimate_plts|function|47ae6e9644b327f1
-init_method_levels|function|b78424d2134f1850
+tidy_lm|function|6dccc9c3d55da12f
+init_method_levels|function|a8951019df86d304
 plt_estimates|function|3ceb885a39fbabd6
 define_params|function|a6a72fbc563fc9c4
+fiml_model|function|ec8fa03574e83bb3
 identify_axis_limits|function|8ed9a70c8a437caa
-init_params_tidy_key|function|d65fc70774efdb8c
+init_params_tidy_key|function|3db1dd8f605031d7
 ggsave_and_return_path|function|d0c8609144db2ce4
 init_params|function|e8a88fab93046900
-fit_models|function|f7e7a6a5f79f0a51
+tidy_frm_em|function|6b5886d5b65a024a
 clear_workers|function|915eec6cf5bd4dde
 generate_data|function|cf406bfa776117e0
-plt_estimates_over_conditions|function|999d1c79a363d266
-tidy_models|function|7ccd50e6ee0171b8
-simulate_over_conditions|function|9d5880f0b5e98ac5
-sim_v_jess|stem|7e16265423cdb883|d5c8c2a189b06ebc|dc7b102c9c42b24c|-2039373164|docs/reports/sim_v-jess.html*reports/sim_v-jess.qmd|t20607.0744682902s|s71324b|71324|file|local|vector|||11.641||
+plt_estimates_over_conditions|function|626c38cb0784d676
+fit_models|function|ff541ad2e7856c97
+tidy_models|function|33b8296ef6cddf7a
+simulate_over_conditions|function|a7ee64a1e74a8eb8
+params_tidy_key|stem|8530a7c3bfc163e8|b41495e79894b6b7|d69dabe91dcda5c6|-579540488||t20608.8215943054s|s308b|308|qs|local|vector|||0.843||
+sim_data_256738fbef5c4c27|branch|42e58ab0189e0d11|bcfa5d0912189ddd|93f401f2987996a0|1166227068||t20608.8220057075s|s3338179b|3338179|qs|local|vector|sim_data||35.843||
+sim_data_c5487d0bc9295a02|branch|6ed265c1755a9eb4|bcfa5d0912189ddd|93f401f2987996a0|-1381505420||t20608.8220075713s|s3337201b|3337201|qs|local|vector|sim_data||36.015||
+sim_data_cbc7c5d5add53a96|branch|68dc7ae97e2acc87|bcfa5d0912189ddd|93f401f2987996a0|1182136416||t20608.8222393764s|s3340159b|3340159|qs|local|vector|sim_data||33.593||
+sim_data_f429689dc84384dc|branch|03806d39bbef7774|bcfa5d0912189ddd|93f401f2987996a0|-633122215||t20608.8222413717s|s3335720b|3335720|qs|local|vector|sim_data||33.766||
+sim_data|pattern|3cd4f6432a628e08|bcfa5d0912189ddd||552381520||||13351259|qs|local|vector||sim_data_cbc7c5d5add53a96*sim_data_256738fbef5c4c27*sim_data_c5487d0bc9295a02*sim_data_f429689dc84384dc|139.217||
+axis_limits|stem|efccbaff9df77073|1380ee6670d77e9d|0ad82cb75ed4beec|-879560442||t20608.8222518678s|s519b|519|qs|local|vector|||0||
+sim_data_grouped|stem|c3e3163f545d0c69|efdfee211fb8b98a|a1b0801c479605ab|-618810811||t20608.8222568818s|s13806691b|13806691|qs|local|group||sim_data_grouped_97256bdc8949af14*sim_data_grouped_7292e801ca0ce84e|0||
+estimate_plts_a7c9a3c844322fe3|branch|3b7a8fb366d39355|fae06f57bc696c94|701f66704e1da711|-630295900||t20608.8223647845s|s112485180b|112485180|qs|local|list|estimate_plts||1.157||
+estimate_plts_9d609cfa94e12752|branch|5f0e6552125868ef|fae06f57bc696c94|701f66704e1da711|-291317822||t20608.8224481539s|s364064319b|364064319|qs|local|list|estimate_plts||1.343||
+estimate_plts|pattern|30b5d70df98ddc0e|fae06f57bc696c94||-342666574||||476549499|qs|local|list||estimate_plts_a7c9a3c844322fe3*estimate_plts_9d609cfa94e12752|2.5||
+estimate_plt_files_bc01e4f0883650b5|branch|ba958232af826e9b|8662b2203395fd9c|1bf5e83c82cc6e23|-1472914623|outputs/estimate_plt_estimate_plt_files_bc01e4f0883650b5.png|t20608.8225027241s|s450709b|450709|file|local|list|estimate_plt_files||3.969||
+estimate_plt_files_7afcfcd01a594eff|branch|8b80893e1479a16b|8662b2203395fd9c|d018dfa7da264234|601549322|outputs/estimate_plt_estimate_plt_files_7afcfcd01a594eff.png|t20608.8226431415s|s402919b|402919|file|local|list|estimate_plt_files||2.312||
+estimate_plt_files|pattern|5c6689111244e059|8662b2203395fd9c||-2139798580||||853628|file|local|list||estimate_plt_files_bc01e4f0883650b5*estimate_plt_files_7afcfcd01a594eff|6.281||
+sim_v_jess|stem|a3b4045829522a36|d5c8c2a189b06ebc|9c816bd87a04b2fb|-2039373164|docs/reports/sim_v-jess.html*reports/sim_v-jess.qmd|t20608.822748185s|s72268b|72268|file|local|vector|||9.312||
