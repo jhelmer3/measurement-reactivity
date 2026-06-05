@@ -1,9 +1,12 @@
 
 fiml_model <- function(data) {
   fiml_data <- data |> 
-    unnest(aux)
+    unnest(aux) |>
+    mutate(y1_z = ifelse(pretest == 1, y1_z, NA))
   
-  nodes <- seq(min(fiml_data$y1_z), max(fiml_data$y1_z), length.out = 30)
+  nodes <- seq(min(fiml_data$y1_z, na.rm = T),
+               max(fiml_data$y1_z, na.rm = T), 
+               length.out = 30)
   
   ## factorized models
   model.s1 <- list("model" = "linreg", "formula" = aux1 ~ aux2 + aux3 + y2 + y1_z)

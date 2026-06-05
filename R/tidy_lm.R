@@ -1,7 +1,5 @@
 
 tidy_lm <- function(lm_result, params) {
-  print(lm_result)
-  
   lm_result |>
     broom::tidy() |>
     select(term, estimate) |>

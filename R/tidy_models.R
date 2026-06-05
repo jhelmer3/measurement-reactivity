@@ -3,9 +3,9 @@ tidy_models <- function(data) {
   data |>
     unnest(models) |>
     mutate(
-      tidy = map2(
-        result, params,
-        \(result, params) {
+      tidy = pmap(
+        list(result, params, method),
+        \(result, params, method) {
           key <- params |>
             pivot_longer(everything(),
                          names_to = "term", values_to = "true_value") |>
@@ -19,16 +19,59 @@ tidy_models <- function(data) {
           
           {if (class(result) == "lm") tidy_lm(result, params)
             else if (class(result) == "frm_em") tidy_frm_em(result, params)
-            else if (class(result) == "mitml.testEstimates") tidy_mitml(result, params)} |>
-            # pivot_longer(everything(), 
-            #              names_to = "term", values_to = "estimate") |>
+            else if (class(result) == "mitml.testEstimates") tidy_mitml(result, params)
+            else if (class(result) == "brmsfit") tidy_brms(result, params)} |>
             mutate(true_value = recode_values(term,
                                               from = key$true_values_term,
-                                              to = key$true_value))}
-      )) |>
-    unnest(tidy) |>
-    nest(tidy = c(method, term, estimate, true_value))
+                                              to = key$true_value)) |>
+            mutate(method = method,
+                   .before = everything())
+        }
+      )
+    ) |>
+    select(-c(method, result))
 }
+
+# d <- tar_read(gen_data) |>
+#   fit_models(tar_read(compiled_brms_models))
+# 
+# d |>
+#   tidy_models()
+
+# d |>
+#   head(1) |>
+#   tidy_models()
+# 
+# d |>
+#   head(1) |>
+#   unnest(models) |>
+#   mutate(
+#     tidy = map2(
+#       result, params,
+#       \(result, params) {
+#         key <- params |>
+#           pivot_longer(everything(),
+#                        names_to = "term", values_to = "true_value") |>
+#           mutate(true_values_term = replace_values(
+#             term,
+#             from = init_params_tidy_key() |> pull(param_label),
+#             to = init_params_tidy_key() |> pull(tidy_label))) |>
+#           bind_rows(tribble(~true_values_term, ~true_value,
+#                             "diff", 0,
+#                             "diff_squared", 0))
+#         
+#         {if (class(result) == "lm") tidy_lm(result, params)
+#           else if (class(result) == "frm_em") tidy_frm_em(result, params)
+#           else if (class(result) == "mitml.testEstimates") tidy_mitml(result, params)
+#           else if (class(result) == "brmsfit") tidy_brms(result, params)} |>
+#           mutate(true_value = recode_values(term,
+#                                             from = key$true_values_term,
+#                                             to = key$true_value)) |>
+#           mutate(method = first(method),
+#                  .before = everything())
+#         }
+#     )) |> pull(tidy)
+
 
 # tar_read(params) |>
 #   generate_data() |>
