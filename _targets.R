@@ -14,7 +14,7 @@ tar_source()
 
 dir.create("outputs", showWarnings = FALSE, recursive = TRUE)
 
-n_reps <- 20
+n_reps <- 200
 
 list(
   tar_target(params_tidy_key, init_params_tidy_key()),
@@ -32,15 +32,16 @@ list(
                  dplyr::mutate(.by = condition_id,
                                rep = row_number()), 
                condition_id),
-  tar_target(estimate_plts, 
-             plt_estimates_over_conditions(sim_data_grouped, axis_limits),
-             pattern = map(sim_data_grouped),
-             iteration = "list"),
+  # tar_target(estimate_plts, 
+  #            ,
+  #            pattern = map(sim_data_grouped),
+  #            iteration = "list"),
   tar_target(estimate_plt_files,
              paste0("outputs/estimate_plt_", 
                     targets::tar_name(), ".png") |>
-               ggsave_and_return_path(estimate_plts, width = 10, height = 6),
-             pattern = map(estimate_plts),
+               ggsave_and_return_path(plt_estimates_over_conditions(sim_data_grouped, axis_limits),
+                                      width = 10, height = 6),
+             pattern = map(sim_data_grouped),
              iteration = "list",
              format = "file"),
   tar_quarto(name = sim_v_jess,

@@ -18,7 +18,8 @@ tidy_models <- function(data) {
                               "diff_squared", 0))
           
           {if (class(result) == "lm") tidy_lm(result, params)
-            else if (class(result) == "frm_em") tidy_frm_em(result, params)} |>
+            else if (class(result) == "frm_em") tidy_frm_em(result, params)
+            else if (class(result) == "mitml.testEstimates") tidy_mitml(result, params)} |>
             # pivot_longer(everything(), 
             #              names_to = "term", values_to = "estimate") |>
             mutate(true_value = recode_values(term,

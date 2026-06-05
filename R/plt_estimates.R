@@ -17,10 +17,18 @@ plt_estimates <- function(data, axis_limits, method_levels) {
   
   tidy |>
     group_split(term) |>
-    map(\(data) data |>
+    map(\(data) {
+      term_name <- first(data$term)
+      term_true <- true_values |> 
+        filter(term == term_name)
+      term_limits <- axis_limits |>
+        filter(term == term_name) |>
+        select(min_est, max_est) |>
+        reduce(c)
+      
+      data |>
           ggplot(aes(x = method, y = estimate, color = method, fill = method)) +
-          geom_line(data = true_values |>
-                      filter(term == first(data$term)),
+          geom_line(data = term_true,
                     aes(y = true_value, x = method, group = term),
                     color = "black") +
           geom_violin(color = NA, alpha = .6) +
@@ -36,16 +44,14 @@ plt_estimates <- function(data, axis_limits, method_levels) {
                                select(method, color) |>
                                deframe(),
                              aesthetics = c("color", "fill")) +
-          coord_cartesian(ylim = axis_limits |>
-                            filter(term == first(data$term)) |>
-                            select(min_est, max_est) |>
-                            reduce(c),
+          coord_cartesian(ylim = term_limits,
                           clip = "off") +
-          labs(title = first(data$term)) +
+          labs(title = term_name) +
           theme_classic(base_size = 12) +
           theme(strip.background = element_blank(),
                 strip.text = element_text(face = "bold"),
-                plot.title = element_text(size = 10, hjust = 0.5))) |>
+                plot.title = element_text(size = 10, hjust = 0.5))
+      }) |>
     wrap_plots() +
     plot_annotation(title = plt_title,
                     theme = theme(plot.title = element_text(hjust = 0.5)))
