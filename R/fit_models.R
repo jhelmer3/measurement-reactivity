@@ -5,21 +5,56 @@ fit_models <- function(data, compiled_brms_models) {
                 select(condition_id, compiled_brms_model),
               by = "condition_id") |>
     mutate(
-      models = map2(data, compiled_brms_model,
-                    \(data, compiled_brms_model) tribble(
-                      ~method, ~result,
-                      "lm_between", lm(y2_between ~ treatment, data = data),
-                      "lm_pretest", lm(y2_pretest ~ treatment * y1_z, data = data),
-                      "lm_true", lm(y2 ~ treatment * pretest * y1_z, data = data),
-                      "fiml", fiml_model(data),
-                      "mi", mi_model(data),
-                      "brms", brms_model(data, compiled_brms_model)
-                    ))
+      models = pmap(list(data, params, compiled_brms_model),
+                    \(data, params, compiled_brms_model) 
+                    fit_and_tidy_one(data, params, compiled_brms_model))
     ) |>
-    select(-compiled_brms_model)
+    select(-c(data, compiled_brms_model))
   
 }
 
+# tar_read(gen_data) |>
+#   first() |>
+#   left_join(tar_read(compiled_brms_models) |>
+#               select(condition_id, compiled_brms_model),
+#             by = "condition_id") |>
+#   mutate(
+#     models = pmap(list(data, params, compiled_brms_model),
+#                   \(data, params, compiled_brms_model) fit_and_tidy_one())
+#   ) |>
+#   select(-c(data, compiled_brms_model))
+
+# tar_read(gen_data) |>
+#   first() |>
+#   inner_join(tar_read(compiled_brms_models) |>
+#               select(condition_id, compiled_brms_model),
+#             by = "condition_id") |>
+#   mutate(
+#     models = map2(data, compiled_brms_model,
+#                   \(data, compiled_brms_model) tribble(
+#                     ~method, ~result,
+#                     "lm_between", lm(y2_between ~ treatment, data = data),
+#                     "lm_pretest", lm(y2_pretest ~ treatment * y1_z, data = data),
+#                     "lm_true", lm(y2 ~ treatment * pretest * y1_z, data = data),
+#                     "fiml", fiml_model(data),
+#                     "mi", mi_model(data),
+#                     "brms", brms_model(data, compiled_brms_model)
+#                   ))
+#   ) |>
+#   select(-compiled_brms_model)
+# 
+# tar_read(gen_data) |>
+#   first() |>
+#   left_join(tar_read(compiled_brms_models) |>
+#               select(condition_id, compiled_brms_model),
+#             by = "condition_id") |>
+#   mutate(
+#     models = map2(data, compiled_brms_model,
+#                   \(data, compiled_brms_model) tribble(
+#                     ~method, ~result,
+#                     "brms", brms_model(data, compiled_brms_model)
+#                   ))
+#   )
 
 # d <- tar_read(gen_data) |>
 #   head(6) |>

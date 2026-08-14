@@ -2,13 +2,16 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.33">
+<meta name="generator" content="quarto-1.9.38">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
 <title>Basic Measurement Reactivity Simulation – Measurement Reactivity</title>
 <style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -71,10 +74,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-ea385d0e468b0dd5ea5bf0780b1290d9.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-dfb324f25d9b1687192fa8be62ac8f9c.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-a0f9fd0d421825b736dc1bbcbcba2219.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -104,7 +107,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }</script>
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <script type="text/javascript">
 const typesetMath = (el) => {
@@ -117,7 +120,7 @@ const typesetMath = (el) => {
     var macros = [];
     for (var i = 0; i < mathElements.length; i++) {
       var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
         window.katex.render(texText.data, mathElements[i], {
           displayMode: mathElements[i].classList.contains('display'),
           throwOnError: false,
@@ -181,6 +184,9 @@ window.Quarto = {
   <li><a href="#simulation" id="toc-simulation" class="nav-link" data-scroll-target="#simulation">Simulation</a>
   <ul class="collapse">
   <li><a href="#parameters" id="toc-parameters" class="nav-link" data-scroll-target="#parameters">Parameters</a></li>
+  <li><a href="#varying-beta_4" id="toc-varying-beta_4" class="nav-link" data-scroll-target="#varying-beta_4">Varying <span class="math inline">\(\beta_4\)</span></a></li>
+  <li><a href="#varying-beta_5" id="toc-varying-beta_5" class="nav-link" data-scroll-target="#varying-beta_5">Varying <span class="math inline">\(\beta_5\)</span></a></li>
+  <li><a href="#varying-beta_6" id="toc-varying-beta_6" class="nav-link" data-scroll-target="#varying-beta_6">Varying <span class="math inline">\(\beta_6\)</span></a></li>
   </ul></li>
   </ul>
 </nav>
@@ -211,7 +217,7 @@ window.Quarto = {
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(targets)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(targets)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gt)</span>
@@ -228,7 +234,7 @@ window.Quarto = {
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">str_wrap</span>(<span class="dv">20</span>)</span>
 <span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>node_size <span class="ot">&lt;-</span> <span class="dv">30</span></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>text_size <span class="ot">&lt;-</span> <span class="dv">12</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>text_size <span class="ot">&lt;-</span> <span class="dv">12</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <section id="model-setup" class="level2 page-columns page-full">
@@ -238,13 +244,13 @@ window.Quarto = {
 <div class="cell page-columns page-full">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>ggdag<span class="sc">::</span><span class="fu">dagify</span>(y2 <span class="sc">~</span> y1,</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>ggdag<span class="sc">::</span><span class="fu">dagify</span>(y2 <span class="sc">~</span> y1,</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>              y2 <span class="sc">~</span> t,</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">labels =</span> dag_labels) <span class="sc">|&gt;</span></span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  ggdag<span class="sc">::</span><span class="fu">ggdag</span>(<span class="at">use_labels =</span> <span class="st">"label"</span>,</span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>               <span class="at">node_size =</span> node_size,</span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>               <span class="at">text_size =</span> text_size) <span class="sc">+</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_void</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_void</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 
 <div class="no-row-height column-margin column-container"><div class="cell-output-display">
@@ -260,12 +266,12 @@ window.Quarto = {
 <div class="cell page-columns page-full">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>ggdag<span class="sc">::</span><span class="fu">dagify</span>(y2 <span class="sc">~</span> t,</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>ggdag<span class="sc">::</span><span class="fu">dagify</span>(y2 <span class="sc">~</span> t,</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>              <span class="at">labels =</span> dag_labels) <span class="sc">|&gt;</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  ggdag<span class="sc">::</span><span class="fu">ggdag</span>(<span class="at">use_labels =</span> <span class="st">"label"</span>,</span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>               <span class="at">node_size =</span> node_size,</span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>               <span class="at">text_size =</span> text_size) <span class="sc">+</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_void</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_void</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 
 <div class="no-row-height column-margin column-container"><div class="cell-output-display">
@@ -280,7 +286,7 @@ window.Quarto = {
 <div class="cell page-columns page-full">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>ggdag<span class="sc">::</span><span class="fu">dagify</span>(y2 <span class="sc">~</span> y1,</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>ggdag<span class="sc">::</span><span class="fu">dagify</span>(y2 <span class="sc">~</span> y1,</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>              y2 <span class="sc">~</span> t,</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>              y2 <span class="sc">~</span> y1_t,</span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>              y1_t <span class="sc">~</span> t,</span>
@@ -289,7 +295,7 @@ window.Quarto = {
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  ggdag<span class="sc">::</span><span class="fu">ggdag</span>(<span class="at">use_labels =</span> <span class="st">"label"</span>,</span>
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>               <span class="at">node_size =</span> node_size,</span>
 <span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>               <span class="at">text_size =</span> text_size) <span class="sc">+</span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_void</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_void</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 
 <div class="no-row-height column-margin column-container"><div class="cell-output-display">
@@ -311,7 +317,7 @@ window.Quarto = {
 <div class="cell page-columns page-full">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>ggdag<span class="sc">::</span><span class="fu">dagify</span>(y2 <span class="sc">~</span> u,</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>ggdag<span class="sc">::</span><span class="fu">dagify</span>(y2 <span class="sc">~</span> u,</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>              y2 <span class="sc">~</span> y1 <span class="sc">+</span> t <span class="sc">+</span> pretest <span class="sc">+</span> t_y1 <span class="sc">+</span> pretest_t <span class="sc">+</span> pretest_y1 <span class="sc">+</span> pretest_t_y1,</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>              t_y1 <span class="sc">~</span> t <span class="sc">+</span> y1,</span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>              pretest_t <span class="sc">~</span> pretest <span class="sc">+</span> t,</span>
@@ -319,20 +325,20 @@ window.Quarto = {
 <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>              pretest_t_y1 <span class="sc">~</span> pretest <span class="sc">+</span> t <span class="sc">+</span> y1,</span>
 <span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>              <span class="at">labels =</span> dag_labels,</span>
 <span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>              <span class="at">coords =</span> <span class="fu">list</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="at">u =</span> <span class="fl">3.5</span>,</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">y2 =</span> <span class="dv">3</span>, </span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">pretest_t_y1 =</span> <span class="fl">1.5</span>, </span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">y2 =</span> <span class="dv">3</span>,</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">pretest_t_y1 =</span> <span class="fl">1.5</span>,</span>
 <span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">pretest_y1 =</span> <span class="fl">0.75</span>, <span class="at">pretest_t =</span> <span class="fl">0.75</span>, <span class="at">t_y1 =</span> <span class="fl">0.75</span>,</span>
 <span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">t =</span> <span class="dv">0</span>, <span class="at">pretest =</span> <span class="dv">0</span>, <span class="at">y1 =</span> <span class="dv">0</span>),</span>
 <span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>                            <span class="at">y =</span> <span class="fu">c</span>(<span class="at">u =</span> <span class="dv">0</span>,</span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">y2 =</span> <span class="dv">0</span>, </span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">pretest_t_y1 =</span> <span class="dv">0</span>, </span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">y2 =</span> <span class="dv">0</span>,</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">pretest_t_y1 =</span> <span class="dv">0</span>,</span>
 <span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">pretest_y1 =</span> <span class="fl">0.75</span>, <span class="at">pretest_t =</span> <span class="dv">0</span>, <span class="at">t_y1 =</span> <span class="sc">-</span><span class="fl">0.75</span>,</span>
 <span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">t =</span> <span class="sc">-</span><span class="dv">1</span>, <span class="at">pretest =</span> <span class="dv">0</span>, <span class="at">y1 =</span> <span class="dv">1</span>))</span>
 <span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>              ) <span class="sc">|&gt;</span></span>
 <span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>  ggdag<span class="sc">::</span><span class="fu">ggdag</span>(<span class="at">use_labels =</span> <span class="st">"label"</span>,</span>
 <span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>               <span class="at">node_size =</span> node_size,</span>
 <span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>               <span class="at">text_size =</span> <span class="dv">4</span>) <span class="sc">+</span></span>
-<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_void</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_void</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 
 <div class="no-row-height column-margin column-container"><div class="cell-output-display">
@@ -365,12 +371,12 @@ window.Quarto = {
 <p><span class="math display">\[ y_{1,i} = \sum aux_i + \epsilon_{impute,i} \]</span></p>
 <p>where <span class="math inline">\(\sigma_{\epsilon_{impute,i}} = K\frac{1-R^2_{aux}}{R^2_{aux}}\)</span></p>
 <div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Relationship Among <span class="math inline">\(\sigma\)</span>, <span class="math inline">\(K\)</span>, and <span class="math inline">\(R^2\)</span>
+<span class="screen-reader-only">Note</span>Relationship Among <span class="math inline">\(\sigma\)</span>, <span class="math inline">\(K\)</span>, and <span class="math inline">\(R^2\)</span>
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
@@ -379,7 +385,7 @@ Relationship Among <span class="math inline">\(\sigma\)</span>, <span class="mat
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(<span class="at">r2 =</span> <span class="fu">seq</span>(.<span class="dv">1</span>, .<span class="dv">9</span>, <span class="at">length.out =</span> <span class="dv">50</span>),</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(<span class="at">r2 =</span> <span class="fu">seq</span>(.<span class="dv">1</span>, .<span class="dv">9</span>, <span class="at">length.out =</span> <span class="dv">50</span>),</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>       <span class="at">sigma =</span> <span class="fu">map</span>(r2, \(r2) <span class="fu">tibble</span>(<span class="at">K =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>,</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">sigma =</span> K <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> r2) <span class="sc">/</span> r2))) <span class="sc">|&gt;</span></span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(sigma) <span class="sc">|&gt;</span></span>
@@ -389,7 +395,7 @@ Relationship Among <span class="math inline">\(\sigma\)</span>, <span class="mat
 <span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">guides</span>(<span class="at">x =</span> <span class="fu">guide_axis</span>(<span class="at">cap =</span> T),</span>
 <span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">y =</span> <span class="fu">guide_axis</span>(<span class="at">cap =</span> T)) <span class="sc">+</span></span>
 <span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">aspect.ratio =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">aspect.ratio =</span> <span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -403,40 +409,40 @@ Relationship Among <span class="math inline">\(\sigma\)</span>, <span class="mat
 </div>
 </div>
 </section>
-<section id="simulation" class="level2 page-columns page-full">
+<section id="simulation" class="level2">
 <h2 class="anchored" data-anchor-id="simulation">Simulation</h2>
-<section id="parameters" class="level3 page-columns page-full">
+<section id="parameters" class="level3">
 <h3 class="anchored" data-anchor-id="parameters">Parameters</h3>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>param_set <span class="ot">&lt;-</span> <span class="fu">tar_read</span>(param_set, <span class="at">store =</span> here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"_targets"</span>))</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>param_set <span class="ot">&lt;-</span> <span class="fu">tar_read</span>(param_set, <span class="at">store =</span> here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"_targets"</span>))</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>param_set <span class="sc">|&gt;</span></span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">enframe</span>() <span class="sc">|&gt;</span></span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> name, <span class="at">values_from =</span> value) <span class="sc">|&gt;</span></span>
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt</span>() <span class="sc">|&gt;</span></span>
 <span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_style</span>(<span class="fu">cell_text</span>(<span class="at">weight =</span> <span class="st">"bold"</span>),</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>            <span class="fu">cells_column_labels</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>            <span class="fu">cells_column_labels</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
-<div id="klifxvaomb" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#klifxvaomb table {
+<div id="idfsgbltmp" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#idfsgbltmp table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#klifxvaomb thead, #klifxvaomb tbody, #klifxvaomb tfoot, #klifxvaomb tr, #klifxvaomb td, #klifxvaomb th {
+#idfsgbltmp thead, #idfsgbltmp tbody, #idfsgbltmp tfoot, #idfsgbltmp tr, #idfsgbltmp td, #idfsgbltmp th {
   border-style: none;
 }
 
-#klifxvaomb p {
+#idfsgbltmp p {
   margin: 0;
   padding: 0;
 }
 
-#klifxvaomb .gt_table {
+#idfsgbltmp .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -462,12 +468,12 @@ Relationship Among <span class="math inline">\(\sigma\)</span>, <span class="mat
   border-left-color: #D3D3D3;
 }
 
-#klifxvaomb .gt_caption {
+#idfsgbltmp .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#klifxvaomb .gt_title {
+#idfsgbltmp .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -479,7 +485,7 @@ Relationship Among <span class="math inline">\(\sigma\)</span>, <span class="mat
   border-bottom-width: 0;
 }
 
-#klifxvaomb .gt_subtitle {
+#idfsgbltmp .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -491,7 +497,7 @@ Relationship Among <span class="math inline">\(\sigma\)</span>, <span class="mat
   border-top-width: 0;
 }
 
-#klifxvaomb .gt_heading {
+#idfsgbltmp .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -503,13 +509,13 @@ Relationship Among <span class="math inline">\(\sigma\)</span>, <span class="mat
   border-right-color: #D3D3D3;
 }
 
-#klifxvaomb .gt_bottom_border {
+#idfsgbltmp .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#klifxvaomb .gt_col_headings {
+#idfsgbltmp .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -524,7 +530,7 @@ Relationship Among <span class="math inline">\(\sigma\)</span>, <span class="mat
   border-right-color: #D3D3D3;
 }
 
-#klifxvaomb .gt_col_heading {
+#idfsgbltmp .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -544,7 +550,7 @@ Relationship Among <span class="math inline">\(\sigma\)</span>, <span class="mat
   overflow-x: hidden;
 }
 
-#klifxvaomb .gt_column_spanner_outer {
+#idfsgbltmp .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -556,15 +562,15 @@ Relationship Among <span class="math inline">\(\sigma\)</span>, <span class="mat
   padding-right: 4px;
 }
 
-#klifxvaomb .gt_column_spanner_outer:first-child {
+#idfsgbltmp .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#klifxvaomb .gt_column_spanner_outer:last-child {
+#idfsgbltmp .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#klifxvaomb .gt_column_spanner {
+#idfsgbltmp .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -576,11 +582,11 @@ Relationship Among <span class="math inline">\(\sigma\)</span>, <span class="mat
   width: 100%;
 }
 
-#klifxvaomb .gt_spanner_row {
+#idfsgbltmp .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#klifxvaomb .gt_group_heading {
+#idfsgbltmp .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -606,7 +612,7 @@ Relationship Among <span class="math inline">\(\sigma\)</span>, <span class="mat
   text-align: left;
 }
 
-#klifxvaomb .gt_empty_group_heading {
+#idfsgbltmp .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -621,15 +627,15 @@ Relationship Among <span class="math inline">\(\sigma\)</span>, <span class="mat
   vertical-align: middle;
 }
 
-#klifxvaomb .gt_from_md > :first-child {
+#idfsgbltmp .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#klifxvaomb .gt_from_md > :last-child {
+#idfsgbltmp .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#klifxvaomb .gt_row {
+#idfsgbltmp .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -648,7 +654,7 @@ Relationship Among <span class="math inline">\(\sigma\)</span>, <span class="mat
   overflow-x: hidden;
 }
 
-#klifxvaomb .gt_stub {
+#idfsgbltmp .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -661,7 +667,7 @@ Relationship Among <span class="math inline">\(\sigma\)</span>, <span class="mat
   padding-right: 5px;
 }
 
-#klifxvaomb .gt_stub_row_group {
+#idfsgbltmp .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -675,15 +681,15 @@ Relationship Among <span class="math inline">\(\sigma\)</span>, <span class="mat
   vertical-align: top;
 }
 
-#klifxvaomb .gt_row_group_first td {
+#idfsgbltmp .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#klifxvaomb .gt_row_group_first th {
+#idfsgbltmp .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#klifxvaomb .gt_summary_row {
+#idfsgbltmp .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -693,16 +699,16 @@ Relationship Among <span class="math inline">\(\sigma\)</span>, <span class="mat
   padding-right: 5px;
 }
 
-#klifxvaomb .gt_first_summary_row {
+#idfsgbltmp .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#klifxvaomb .gt_first_summary_row.thick {
+#idfsgbltmp .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#klifxvaomb .gt_last_summary_row {
+#idfsgbltmp .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -712,7 +718,7 @@ Relationship Among <span class="math inline">\(\sigma\)</span>, <span class="mat
   border-bottom-color: #D3D3D3;
 }
 
-#klifxvaomb .gt_grand_summary_row {
+#idfsgbltmp .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -722,7 +728,7 @@ Relationship Among <span class="math inline">\(\sigma\)</span>, <span class="mat
   padding-right: 5px;
 }
 
-#klifxvaomb .gt_first_grand_summary_row {
+#idfsgbltmp .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -732,7 +738,7 @@ Relationship Among <span class="math inline">\(\sigma\)</span>, <span class="mat
   border-top-color: #D3D3D3;
 }
 
-#klifxvaomb .gt_last_grand_summary_row_top {
+#idfsgbltmp .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -742,11 +748,11 @@ Relationship Among <span class="math inline">\(\sigma\)</span>, <span class="mat
   border-bottom-color: #D3D3D3;
 }
 
-#klifxvaomb .gt_striped {
+#idfsgbltmp .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#klifxvaomb .gt_table_body {
+#idfsgbltmp .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -755,7 +761,7 @@ Relationship Among <span class="math inline">\(\sigma\)</span>, <span class="mat
   border-bottom-color: #D3D3D3;
 }
 
-#klifxvaomb .gt_footnotes {
+#idfsgbltmp .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -769,7 +775,7 @@ Relationship Among <span class="math inline">\(\sigma\)</span>, <span class="mat
   border-right-color: #D3D3D3;
 }
 
-#klifxvaomb .gt_footnote {
+#idfsgbltmp .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -778,7 +784,7 @@ Relationship Among <span class="math inline">\(\sigma\)</span>, <span class="mat
   padding-right: 5px;
 }
 
-#klifxvaomb .gt_sourcenotes {
+#idfsgbltmp .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -792,7 +798,7 @@ Relationship Among <span class="math inline">\(\sigma\)</span>, <span class="mat
   border-right-color: #D3D3D3;
 }
 
-#klifxvaomb .gt_sourcenote {
+#idfsgbltmp .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -800,72 +806,72 @@ Relationship Among <span class="math inline">\(\sigma\)</span>, <span class="mat
   padding-right: 5px;
 }
 
-#klifxvaomb .gt_left {
+#idfsgbltmp .gt_left {
   text-align: left;
 }
 
-#klifxvaomb .gt_center {
+#idfsgbltmp .gt_center {
   text-align: center;
 }
 
-#klifxvaomb .gt_right {
+#idfsgbltmp .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#klifxvaomb .gt_font_normal {
+#idfsgbltmp .gt_font_normal {
   font-weight: normal;
 }
 
-#klifxvaomb .gt_font_bold {
+#idfsgbltmp .gt_font_bold {
   font-weight: bold;
 }
 
-#klifxvaomb .gt_font_italic {
+#idfsgbltmp .gt_font_italic {
   font-style: italic;
 }
 
-#klifxvaomb .gt_super {
+#idfsgbltmp .gt_super {
   font-size: 65%;
 }
 
-#klifxvaomb .gt_footnote_marks {
+#idfsgbltmp .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#klifxvaomb .gt_asterisk {
+#idfsgbltmp .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#klifxvaomb .gt_indent_1 {
+#idfsgbltmp .gt_indent_1 {
   text-indent: 5px;
 }
 
-#klifxvaomb .gt_indent_2 {
+#idfsgbltmp .gt_indent_2 {
   text-indent: 10px;
 }
 
-#klifxvaomb .gt_indent_3 {
+#idfsgbltmp .gt_indent_3 {
   text-indent: 15px;
 }
 
-#klifxvaomb .gt_indent_4 {
+#idfsgbltmp .gt_indent_4 {
   text-indent: 20px;
 }
 
-#klifxvaomb .gt_indent_5 {
+#idfsgbltmp .gt_indent_5 {
   text-indent: 25px;
 }
 
-#klifxvaomb .katex-display {
+#idfsgbltmp .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#klifxvaomb div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#idfsgbltmp div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -882,6 +888,7 @@ Relationship Among <span class="math inline">\(\sigma\)</span>, <span class="mat
       <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" style="font-weight: bold;" scope="col" id="beta1">beta1</th>
       <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" style="font-weight: bold;" scope="col" id="beta2">beta2</th>
       <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" style="font-weight: bold;" scope="col" id="beta3">beta3</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" style="font-weight: bold;" scope="col" id="beta4">beta4</th>
       <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" style="font-weight: bold;" scope="col" id="beta5">beta5</th>
       <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" style="font-weight: bold;" scope="col" id="beta6">beta6</th>
       <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" style="font-weight: bold;" scope="col" id="beta7">beta7</th>
@@ -889,8 +896,8 @@ Relationship Among <span class="math inline">\(\sigma\)</span>, <span class="mat
     </tr>
   </thead>
   <tbody class="gt_table_body">
-    <tr><td headers="n_reps" class="gt_row gt_center">200</td>
-<td headers="N" class="gt_row gt_center">100, 400</td>
+    <tr><td headers="n_reps" class="gt_row gt_center">20</td>
+<td headers="N" class="gt_row gt_center">200</td>
 <td headers="K" class="gt_row gt_center">3</td>
 <td headers="r2_aux" class="gt_row gt_center">0.33</td>
 <td headers="p_pretest" class="gt_row gt_center">0.4</td>
@@ -899,8 +906,9 @@ Relationship Among <span class="math inline">\(\sigma\)</span>, <span class="mat
 <td headers="beta1" class="gt_row gt_center">0.3</td>
 <td headers="beta2" class="gt_row gt_center">0.2</td>
 <td headers="beta3" class="gt_row gt_center">1</td>
-<td headers="beta5" class="gt_row gt_center">-0.1</td>
-<td headers="beta6" class="gt_row gt_center">0</td>
+<td headers="beta4" class="gt_row gt_center">-0.225, 0.000, 0.225</td>
+<td headers="beta5" class="gt_row gt_center">-0.225, 0.000, 0.225</td>
+<td headers="beta6" class="gt_row gt_center">-0.75, 0.00, 0.75</td>
 <td headers="beta7" class="gt_row gt_center">0</td>
 <td headers="sigma" class="gt_row gt_center">1</td></tr>
   </tbody>
@@ -910,38 +918,99 @@ Relationship Among <span class="math inline">\(\sigma\)</span>, <span class="mat
 </div>
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>n_conditions <span class="ot">&lt;-</span> param_set <span class="sc">|&gt;</span> <span class="fu">map</span>(length) <span class="sc">|&gt;</span> <span class="fu">reduce</span>(<span class="st">`</span><span class="at">*</span><span class="st">`</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>n_conditions <span class="ot">&lt;-</span> param_set <span class="sc">|&gt;</span> <span class="fu">map</span>(length) <span class="sc">|&gt;</span> <span class="fu">reduce</span>(<span class="st">`</span><span class="at">*</span><span class="st">`</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
-<p>This combination of parameters results in replications of 2 conditions.</p>
+<p>This combination of parameters results in replications of 27 conditions.</p>
+<div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># tar_read(estimate_plt_files, store = here::here("_targets")) |&gt;</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co">#   unlist() |&gt;</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co">#   #file.path("..", ... = _) |&gt;</span></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co">#   here::here() |&gt;</span></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co">#   normalizePath(winslash = "/")</span></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co"># tar_read(estimate_plt_files, store = here::here("_targets")) |&gt;</span></span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="co">#   unlist() |&gt;</span></span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="co">#   file.path("..", ... = _) |&gt;</span></span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="co">#   #here::here() |&gt;</span></span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="co">#   normalizePath(winslash = "/")</span></span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="fu">tar_read</span>(estimate_plt_files, <span class="at">store =</span> here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"_targets"</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unlist</span>() <span class="sc">|&gt;</span></span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>  <span class="co">#file.path("..", ... = _) |&gt;</span></span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>  <span class="co">#here::here() |&gt;</span></span>
-<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">normalizePath</span>(<span class="at">winslash =</span> <span class="st">"/"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">include_graphics</span>(<span class="at">error =</span> F)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tar_load</span>(<span class="fu">c</span>(params, estimate_plt_files), <span class="at">store =</span> here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"_targets"</span>))</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>interaction_terms <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"beta4"</span>, <span class="st">"beta5"</span>, <span class="st">"beta6"</span>)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>condition_id_list <span class="ot">&lt;-</span> interaction_terms <span class="sc">|&gt;</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(\(varying_term) {</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    remaining_terms <span class="ot">&lt;-</span> interaction_terms <span class="sc">|&gt;</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>      <span class="fu">discard</span>(<span class="sc">~</span> .x <span class="sc">==</span> varying_term)</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    remaining_terms</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    params <span class="sc">|&gt;</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>      <span class="fu">filter</span>(<span class="fu">when_all</span>(</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>        <span class="fu">eval</span>(<span class="fu">sym</span>(remaining_terms[[<span class="dv">1</span>]])) <span class="sc">==</span> <span class="dv">0</span>,</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>        <span class="fu">eval</span>(<span class="fu">sym</span>(remaining_terms[[<span class="dv">2</span>]])) <span class="sc">==</span> <span class="dv">0</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>      )) <span class="sc">|&gt;</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>      <span class="fu">pull</span>(condition_id)</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>estimate_plt_files_idxs <span class="ot">&lt;-</span> condition_id_list <span class="sc">|&gt;</span></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(</span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>    \(varying_term_condition_ids) {</span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>      <span class="fu">which</span>(</span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>        (estimate_plt_files <span class="sc">|&gt;</span></span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>           <span class="fu">unlist</span>() <span class="sc">|&gt;</span></span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>           <span class="fu">map</span>(\(filename) (filename <span class="sc">|&gt;</span> <span class="fu">str_extract</span>(<span class="st">"condition_(</span><span class="sc">\\</span><span class="st">d+)"</span>, <span class="at">group =</span> <span class="dv">1</span>)))) <span class="sc">%in%</span></span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>          varying_term_condition_ids</span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>varying_term_values <span class="ot">&lt;-</span> <span class="fu">map2</span>(</span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>  interaction_terms, condition_id_list,</span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a>  \(interaction_term, varying_term_condition_id) params <span class="sc">|&gt;</span></span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(condition_id <span class="sc">%in%</span> varying_term_condition_id) <span class="sc">|&gt;</span></span>
+<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pluck</span>(interaction_term)</span>
+<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
-<div class="cell column-screen quarto-layout-panel" data-layout-ncol="2">
-<div class="quarto-layout-row">
-<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
-<p><img src="../outputs/estimate_plt_estimate_plt_files_eb9387ec7e273f61.png" class="img-fluid" width="1650"></p>
 </div>
-<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
-<p><img src="../outputs/estimate_plt_estimate_plt_files_68581dc1da7cd666.png" class="img-fluid" width="1650"></p>
+</section>
+<section id="varying-beta_4" class="level3">
+<h3 class="anchored" data-anchor-id="varying-beta_4">Varying <span class="math inline">\(\beta_4\)</span></h3>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href=""><span class="math inline">\(\beta_4 = -0.225\)</span></a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href=""><span class="math inline">\(\beta_4 = 0\)</span></a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false" href=""><span class="math inline">\(\beta_4 = 0.225\)</span></a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<p><img src="..\outputs/estimate_plt_condition_5.png" class="img-fluid"></p>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<p><img src="..\outputs/estimate_plt_condition_14.png" class="img-fluid"></p>
+</div>
+<div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
+<p><img src="..\outputs/estimate_plt_condition_23.png" class="img-fluid"></p>
+</div>
+</div>
+</div>
+</section>
+<section id="varying-beta_5" class="level3">
+<h3 class="anchored" data-anchor-id="varying-beta_5">Varying <span class="math inline">\(\beta_5\)</span></h3>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true" href=""><span class="math inline">\(\beta_5 = -0.225\)</span></a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false" href=""><span class="math inline">\(\beta_5 = 0\)</span></a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-3" role="tab" aria-controls="tabset-2-3" aria-selected="false" href=""><span class="math inline">\(\beta_5 = 0.225\)</span></a></li></ul>
+<div class="tab-content">
+<div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
+<p><img src="..\outputs/estimate_plt_condition_11.png" class="img-fluid"></p>
+</div>
+<div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
+<p><img src="..\outputs/estimate_plt_condition_14.png" class="img-fluid"></p>
+</div>
+<div id="tabset-2-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-3-tab">
+<p><img src="..\outputs/estimate_plt_condition_17.png" class="img-fluid"></p>
+</div>
+</div>
+</div>
+</section>
+<section id="varying-beta_6" class="level3">
+<h3 class="anchored" data-anchor-id="varying-beta_6">Varying <span class="math inline">\(\beta_6\)</span></h3>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true" href=""><span class="math inline">\(\beta_6 = -0.75\)</span></a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false" href=""><span class="math inline">\(\beta_6 = 0\)</span></a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-3" role="tab" aria-controls="tabset-3-3" aria-selected="false" href=""><span class="math inline">\(\beta_6 = 0.75\)</span></a></li></ul>
+<div class="tab-content">
+<div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
+<p><img src="..\outputs/estimate_plt_condition_13.png" class="img-fluid"></p>
+</div>
+<div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
+<p><img src="..\outputs/estimate_plt_condition_14.png" class="img-fluid"></p>
+</div>
+<div id="tabset-3-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-3-tab">
+<p><img src="..\outputs/estimate_plt_condition_15.png" class="img-fluid"></p>
 </div>
 </div>
 </div>
@@ -1002,13 +1071,14 @@ Relationship Among <span class="math inline">\(\sigma\)</span>, <span class="mat
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-        const codeEl = trigger.previousElementSibling.cloneNode(true);
-        for (const childEl of codeEl.children) {
-          if (isCodeAnnotation(childEl)) {
-            childEl.remove();
-          }
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
         }
-        return codeEl.innerText;
+      }
+      return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy

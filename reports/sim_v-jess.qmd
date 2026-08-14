@@ -104,13 +104,13 @@ ggdag::dagify(y2 ~ u,
               pretest_t_y1 ~ pretest + t + y1,
               labels = dag_labels,
               coords = list(x = c(u = 3.5,
-                                  y2 = 3, 
-                                  pretest_t_y1 = 1.5, 
+                                  y2 = 3,
+                                  pretest_t_y1 = 1.5,
                                   pretest_y1 = 0.75, pretest_t = 0.75, t_y1 = 0.75,
                                   t = 0, pretest = 0, y1 = 0),
                             y = c(u = 0,
-                                  y2 = 0, 
-                                  pretest_t_y1 = 0, 
+                                  y2 = 0,
+                                  pretest_t_y1 = 0,
                                   pretest_y1 = 0.75, pretest_t = 0, t_y1 = -0.75,
                                   t = -1, pretest = 0, y1 = 1))
               ) |>
@@ -153,7 +153,7 @@ ggdag::dagify(y2 ~ u,
 
 The data generating process is based on
 
-$$ \boldsymbol{aux} \sim MVN(\boldsymbol{0}, \boldsymbol{I}) $$ 
+$$ \boldsymbol{aux} \sim MVN(\boldsymbol{0}, \boldsymbol{I}) $$
 
 **NOTE:** for now this implies predictors are independent. We should manipulate this!
 
@@ -201,30 +201,100 @@ n_conditions <- param_set |> map(length) |> reduce(`*`)
 This combination of parameters results in `r param_set$rep` replications of `r n_conditions` conditions.
 
 ```{r}
-#| column: screen
-#| fig-width: 18
-#| fig-height: 6
-#| layout-ncol: 2
+tar_load(c(params, estimate_plt_files), store = here::here("_targets"))
 
-# tar_read(estimate_plt_files, store = here::here("_targets")) |>
-#   unlist() |>
-#   #file.path("..", ... = _) |>
-#   here::here() |>
-#   normalizePath(winslash = "/")
-# 
-# tar_read(estimate_plt_files, store = here::here("_targets")) |>
-#   unlist() |>
-#   file.path("..", ... = _) |>
-#   #here::here() |>
-#   normalizePath(winslash = "/")
+interaction_terms <- c("beta4", "beta5", "beta6")
 
-tar_read(estimate_plt_files, store = here::here("_targets")) |>
-  unlist() |>
-  #file.path("..", ... = _) |>
-  #here::here() |>
-  normalizePath(winslash = "/") |>
-  knitr::include_graphics(error = F)
+condition_id_list <- interaction_terms |>
+  map(\(varying_term) {
+    remaining_terms <- interaction_terms |>
+      discard(~ .x == varying_term)
+    remaining_terms
+    
+    params |>
+      filter(when_all(
+        eval(sym(remaining_terms[[1]])) == 0,
+        eval(sym(remaining_terms[[2]])) == 0
+      )) |>
+      pull(condition_id)
+  })
+
+estimate_plt_files_idxs <- condition_id_list |>
+  map(
+    \(varying_term_condition_ids) {
+      which(
+        (estimate_plt_files |>
+           unlist() |>
+           map(\(filename) (filename |> str_extract("condition_(\\d+)", group = 1)))) %in%
+          varying_term_condition_ids
+      )
+    }
+  )
+
+varying_term_values <- map2(
+  interaction_terms, condition_id_list,
+  \(interaction_term, varying_term_condition_id) params |>
+    filter(condition_id %in% varying_term_condition_id) |>
+    pluck(interaction_term)
+)
 ```
+
+### Varying $\beta_4$
+
+::: {.panel-tabset}
+```{r}
+#| results: asis
+#| echo: false
+interaction_terms_values_fmtted <- map2(interaction_terms, varying_term_values,
+                                        \(term, varying_term_values) 
+                                        map_chr(varying_term_values, \(value) term |>
+                                                  str_replace("(?<=[A-Za-z])(?=[0-9])", "_") |>
+                                                  paste0("$\\", ... = _, " = ", value, "$")))
+
+term_idx <- 1
+
+for (i in seq_along(estimate_plt_files_idxs[[1]])) {
+  plt_idx <- estimate_plt_files_idxs[[term_idx]][[i]]
+  
+  cat(sprintf("\n### %s\n\n", interaction_terms_values_fmtted[[term_idx]][[i]]))
+  cat(sprintf("![](/%s)\n\n", estimate_plt_files[[plt_idx]]))
+}
+```
+:::
+
+### Varying $\beta_5$
+
+::: {.panel-tabset}
+```{r}
+#| results: asis
+#| echo: false
+term_idx <- 2
+
+for (i in seq_along(estimate_plt_files_idxs[[1]])) {
+  plt_idx <- estimate_plt_files_idxs[[term_idx]][[i]]
+  
+  cat(sprintf("\n### %s\n\n", interaction_terms_values_fmtted[[term_idx]][[i]]))
+  cat(sprintf("![](/%s)\n\n", estimate_plt_files[[plt_idx]]))
+}
+```
+:::
+
+### Varying $\beta_6$
+
+::: {.panel-tabset}
+```{r}
+#| results: asis
+#| echo: false
+term_idx <- 3
+
+for (i in seq_along(estimate_plt_files_idxs[[1]])) {
+  plt_idx <- estimate_plt_files_idxs[[term_idx]][[i]]
+  
+  cat(sprintf("\n### %s\n\n", interaction_terms_values_fmtted[[term_idx]][[i]]))
+  cat(sprintf("![](/%s)\n\n", estimate_plt_files[[plt_idx]]))
+}
+```
+:::
 
 
 

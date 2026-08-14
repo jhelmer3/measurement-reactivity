@@ -5,3 +5,5 @@
 
 /.quarto/
 /_targets/objects/
+
+**/*.quarto_ipynb

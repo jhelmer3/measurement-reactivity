@@ -1,8 +1,11 @@
 
-compile_brms_model <- function(gen_data) {
-  # gets the very first simulated dataset
-  data <- gen_data |>
-    slice(1, .by = condition_id) |>
+compile_brms_model <- function(gen_data, params) {
+  cur_condition_id <- params$condition_id
+  
+  gen_data |>
+    filter(condition_id == cur_condition_id) |>
+    # gets the very first simulated dataset
+    first() |>
     mutate(
       compiled_brms_model = map2(
         data, condition_id,
@@ -20,18 +23,23 @@ compile_brms_model <- function(gen_data) {
           
           # priors will be default generated for just that first
           # data set. overall to save compile time. consider different
-          brm(brms_frm, data,
-              save_model = here::here(
-                "models",
-                glue::glue("brms_model_condition-{condition_id}.stan")
-              ),
-              chains = 1,
-              iter = 1,
-              silent = 2)
+          brm(
+            brms_frm, 
+            data,
+            backend = "cmdstanr",
+            save_model = here::here(
+              "models",
+              glue::glue("brms_model_condition-{condition_id}.stan")
+            ),
+            warmup = 1,
+            chains = 1,
+            iter = 2,
+            silent = 2
+          )
         }
       )
     )
 }
 
-# tar_read(gen_data) |>
-#   compile_brms_model()
+# compile_brms_model(tar_read(gen_data), tar_read(params) |> last())
+

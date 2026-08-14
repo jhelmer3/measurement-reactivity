@@ -50,7 +50,8 @@ plt_estimates <- function(data, axis_limits, method_levels) {
           theme_classic(base_size = 12) +
           theme(strip.background = element_blank(),
                 strip.text = element_text(face = "bold"),
-                plot.title = element_text(size = 10, hjust = 0.5))
+                plot.title = element_text(size = 10, hjust = 0.5),
+                axis.text.x = element_text(angle = 30, vjust = 0.75))
       }) |>
     wrap_plots() +
     plot_annotation(title = plt_title,

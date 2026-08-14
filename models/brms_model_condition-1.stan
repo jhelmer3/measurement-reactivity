@@ -90,13 +90,13 @@ transformed parameters {
   lprior += student_t_lpdf(Intercept_aux1 | 3, -0.1, 2.5);
   lprior += student_t_lpdf(sigma_aux1 | 3, 0, 2.5)
     - 1 * student_t_lccdf(0 | 3, 0, 2.5);
-  lprior += student_t_lpdf(Intercept_aux2 | 3, 0.3, 2.5);
+  lprior += student_t_lpdf(Intercept_aux2 | 3, 0, 2.5);
   lprior += student_t_lpdf(sigma_aux2 | 3, 0, 2.5)
     - 1 * student_t_lccdf(0 | 3, 0, 2.5);
-  lprior += student_t_lpdf(Intercept_aux3 | 3, 0, 2.5);
+  lprior += student_t_lpdf(Intercept_aux3 | 3, -0.1, 2.5);
   lprior += student_t_lpdf(sigma_aux3 | 3, 0, 2.5)
     - 1 * student_t_lccdf(0 | 3, 0, 2.5);
-  lprior += student_t_lpdf(Intercept_y2 | 3, 0.2, 2.5);
+  lprior += student_t_lpdf(Intercept_y2 | 3, 0.3, 2.5);
   lprior += student_t_lpdf(sigma_y2 | 3, 0, 2.5)
     - 1 * student_t_lccdf(0 | 3, 0, 2.5);
   lprior += student_t_lpdf(Intercept_y1z | 3, 0, 2.5);

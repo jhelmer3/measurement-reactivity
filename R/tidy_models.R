@@ -17,10 +17,12 @@ tidy_models <- function(data) {
                               "diff", 0,
                               "diff_squared", 0))
           
-          {if (class(result) == "lm") tidy_lm(result, params)
+          {
+            if (class(result) == "lm") tidy_lm(result, params)
             else if (class(result) == "frm_em") tidy_frm_em(result, params)
             else if (class(result) == "mitml.testEstimates") tidy_mitml(result, params)
-            else if (class(result) == "brmsfit") tidy_brms(result, params)} |>
+            else if (class(result) == "brmsfit") tidy_brms(result, params)
+            } |>
             mutate(true_value = recode_values(term,
                                               from = key$true_values_term,
                                               to = key$true_value)) |>
