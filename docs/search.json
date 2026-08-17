@@ -25,7 +25,7 @@
     "href": "reports/sim_v-jess.html#simulation",
     "title": "Basic Measurement Reactivity Simulation",
     "section": "Simulation",
-    "text": "Simulation\n\nParameters\n\n\nCode\nparam_set &lt;- tar_read(param_set, store = here::here(\"_targets\"))\n\nparam_set |&gt;\n  enframe() |&gt;\n  pivot_wider(names_from = name, values_from = value) |&gt;\n  gt() |&gt;\n  tab_style(cell_text(weight = \"bold\"),\n            cells_column_labels())\n\n\n\n\n\n  \n    \n      n_reps\n      N\n      K\n      r2_aux\n      p_pretest\n      p_treatment\n      beta0\n      beta1\n      beta2\n      beta3\n      beta4\n      beta5\n      beta6\n      beta7\n      sigma\n    \n  \n  \n    20\n200\n3\n0.33\n0.4\n0.5\n0\n0.3\n0.2\n1\n-0.225, 0.000, 0.225\n-0.225, 0.000, 0.225\n-0.75, 0.00, 0.75\n0\n1\n  \n  \n\n\n\n\nCode\nn_conditions &lt;- param_set |&gt; map(length) |&gt; reduce(`*`)\n\n\nThis combination of parameters results in replications of 27 conditions.\n\n\nCode\ntar_load(c(params, estimate_plt_files), store = here::here(\"_targets\"))\n\ninteraction_terms &lt;- c(\"beta4\", \"beta5\", \"beta6\")\n\ncondition_id_list &lt;- interaction_terms |&gt;\n  map(\\(varying_term) {\n    remaining_terms &lt;- interaction_terms |&gt;\n      discard(~ .x == varying_term)\n    remaining_terms\n    \n    params |&gt;\n      filter(when_all(\n        eval(sym(remaining_terms[[1]])) == 0,\n        eval(sym(remaining_terms[[2]])) == 0\n      )) |&gt;\n      pull(condition_id)\n  })\n\nestimate_plt_files_idxs &lt;- condition_id_list |&gt;\n  map(\n    \\(varying_term_condition_ids) {\n      which(\n        (estimate_plt_files |&gt;\n           unlist() |&gt;\n           map(\\(filename) (filename |&gt; str_extract(\"condition_(\\\\d+)\", group = 1)))) %in%\n          varying_term_condition_ids\n      )\n    }\n  )\n\nvarying_term_values &lt;- map2(\n  interaction_terms, condition_id_list,\n  \\(interaction_term, varying_term_condition_id) params |&gt;\n    filter(condition_id %in% varying_term_condition_id) |&gt;\n    pluck(interaction_term)\n)\n\n\n\n\nVarying \\(\\beta_4\\)\n\n\\(\\beta_4 = -0.225\\)\\(\\beta_4 = 0\\)\\(\\beta_4 = 0.225\\)\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nVarying \\(\\beta_5\\)\n\n\\(\\beta_5 = -0.225\\)\\(\\beta_5 = 0\\)\\(\\beta_5 = 0.225\\)\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nVarying \\(\\beta_6\\)\n\n\\(\\beta_6 = -0.75\\)\\(\\beta_6 = 0\\)\\(\\beta_6 = 0.75\\)"
+    "text": "Simulation\n\nParameters\n\n\nCode\nparam_set &lt;- tar_read(param_set, store = here::here(\"_targets\"))\n\nparam_set |&gt;\n  enframe() |&gt;\n  pivot_wider(names_from = name, values_from = value) |&gt;\n  gt() |&gt;\n  tab_style(cell_text(weight = \"bold\"),\n            cells_column_labels())\n\n\n\n\n\n  \n    \n      n_reps\n      N\n      K\n      r2_aux\n      p_pretest\n      p_treatment\n      beta0\n      beta1\n      beta2\n      beta3\n      beta4\n      beta5\n      beta6\n      beta7\n      sigma\n    \n  \n  \n    200\n200\n3\n0.33\n0.4\n0.5\n0\n0.3\n0.2\n1\n-0.225, 0.000, 0.225\n-0.225, 0.000, 0.225\n-0.75, 0.00, 0.75\n0\n1\n  \n  \n\n\n\n\nCode\nn_conditions &lt;- param_set |&gt; map(length) |&gt; reduce(`*`)\n\n\nThis combination of parameters results in replications of 27 conditions.\n\n\nCode\ntar_load(c(params, estimate_plt_files), store = here::here(\"_targets\"))\n\ninteraction_terms &lt;- c(\"beta4\", \"beta5\", \"beta6\")\n\ncondition_id_list &lt;- interaction_terms |&gt;\n  map(\\(varying_term) {\n    remaining_terms &lt;- interaction_terms |&gt;\n      discard(~ .x == varying_term)\n    remaining_terms\n    \n    params |&gt;\n      filter(when_all(\n        eval(sym(remaining_terms[[1]])) == 0,\n        eval(sym(remaining_terms[[2]])) == 0\n      )) |&gt;\n      pull(condition_id)\n  })\n\nestimate_plt_files_idxs &lt;- condition_id_list |&gt;\n  map(\n    \\(varying_term_condition_ids) {\n      which(\n        (estimate_plt_files |&gt;\n           unlist() |&gt;\n           map(\\(filename) (filename |&gt; str_extract(\"condition_(\\\\d+)\", group = 1)))) %in%\n          varying_term_condition_ids\n      )\n    }\n  )\n\nvarying_term_values &lt;- map2(\n  interaction_terms, condition_id_list,\n  \\(interaction_term, varying_term_condition_id) params |&gt;\n    filter(condition_id %in% varying_term_condition_id) |&gt;\n    pluck(interaction_term)\n)\n\n\n\n\nVarying \\(\\beta_4\\)\n\\(treatment \\times prettest\\)\n\n\\(\\beta_4 = -0.225\\)\\(\\beta_4 = 0\\)\\(\\beta_4 = 0.225\\)\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nVarying \\(\\beta_5\\)\n\\(treatment \\times y_{1}\\)\n\n\\(\\beta_5 = -0.225\\)\\(\\beta_5 = 0\\)\\(\\beta_5 = 0.225\\)\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nVarying \\(\\beta_6\\)\n\\(prettest \\times y_{1}\\)\n\n\\(\\beta_6 = -0.75\\)\\(\\beta_6 = 0\\)\\(\\beta_6 = 0.75\\)"
   },
   {
     "objectID": "reports/sim_v-jess.html#my-tabs",
@@ -33,5 +33,33 @@
     "title": "Basic Measurement Reactivity Simulation",
     "section": "My tabs",
     "text": "My tabs\n\n123\n\n\n \n[1] \"../outputs/estimate_plt_condition_5.png\" \nattr(,\"class\") \n[1] \"knit_image_paths\" \"knit_asis\"        \n\n\n\n \n[1] \"../outputs/estimate_plt_condition_14.png\" \nattr(,\"class\") \n[1] \"knit_image_paths\" \"knit_asis\"        \n\n\n\n \n[1] \"../outputs/estimate_plt_condition_23.png\" \nattr(,\"class\") \n[1] \"knit_image_paths\" \"knit_asis\""
+  },
+  {
+    "objectID": "reports/sim_v-jess.html#parameters",
+    "href": "reports/sim_v-jess.html#parameters",
+    "title": "Basic Measurement Reactivity Simulation",
+    "section": "Parameters",
+    "text": "Parameters\n\n\nCode\nparam_set &lt;- tar_read(param_set, store = here::here(\"_targets\"))\n\nparam_set |&gt;\n  enframe() |&gt;\n  pivot_wider(names_from = name, values_from = value) |&gt;\n  gt() |&gt;\n  tab_style(cell_text(weight = \"bold\"),\n            cells_column_labels())\n\n\n\n\n\n  \n    \n      n_reps\n      N\n      K\n      r2_aux\n      p_pretest\n      p_treatment\n      beta0\n      beta1\n      beta2\n      beta3\n      beta4\n      beta5\n      beta6\n      beta7\n      sigma\n    \n  \n  \n    200\n200\n3\n0.33\n0.4\n0.5\n0\n0.3\n0.2\n1\n-0.225, 0.000, 0.225\n-0.225, 0.000, 0.225\n-0.75, 0.00, 0.75\n0\n1\n  \n  \n\n\n\n\nCode\nn_conditions &lt;- param_set |&gt; map(length) |&gt; reduce(`*`)\n\n\nThis combination of parameters results in replications of 27 conditions.\n\n\nCode\ntar_load(c(params, estimate_plt_files), store = here::here(\"_targets\"))\n\ninteraction_terms &lt;- c(\"beta4\", \"beta5\", \"beta6\")\n\ncondition_id_list &lt;- interaction_terms |&gt;\n  map(\\(varying_term) {\n    remaining_terms &lt;- interaction_terms |&gt;\n      discard(~ .x == varying_term)\n    remaining_terms\n    \n    params |&gt;\n      filter(when_all(\n        eval(sym(remaining_terms[[1]])) == 0,\n        eval(sym(remaining_terms[[2]])) == 0\n      )) |&gt;\n      pull(condition_id)\n  })\n\nestimate_plt_files_idxs &lt;- condition_id_list |&gt;\n  map(\n    \\(varying_term_condition_ids) {\n      which(\n        (estimate_plt_files |&gt;\n           unlist() |&gt;\n           map(\\(filename) (filename |&gt; str_extract(\"condition_(\\\\d+)\", group = 1)))) %in%\n          varying_term_condition_ids\n      )\n    }\n  )\n\nvarying_term_values &lt;- map2(\n  interaction_terms, condition_id_list,\n  \\(interaction_term, varying_term_condition_id) params |&gt;\n    filter(condition_id %in% varying_term_condition_id) |&gt;\n    pluck(interaction_term)\n)"
+  },
+  {
+    "objectID": "reports/sim_v-jess.html#varying-beta_4",
+    "href": "reports/sim_v-jess.html#varying-beta_4",
+    "title": "Basic Measurement Reactivity Simulation",
+    "section": "Varying \\(\\beta_4\\)",
+    "text": "Varying \\(\\beta_4\\)\n\\(treatment \\times prettest\\)\n\n\\(\\beta_4 = -0.225\\)\\(\\beta_4 = 0\\)\\(\\beta_4 = 0.225\\)"
+  },
+  {
+    "objectID": "reports/sim_v-jess.html#varying-beta_5",
+    "href": "reports/sim_v-jess.html#varying-beta_5",
+    "title": "Basic Measurement Reactivity Simulation",
+    "section": "Varying \\(\\beta_5\\)",
+    "text": "Varying \\(\\beta_5\\)\n\\(treatment \\times y_{1}\\)\n\n\\(\\beta_5 = -0.225\\)\\(\\beta_5 = 0\\)\\(\\beta_5 = 0.225\\)"
+  },
+  {
+    "objectID": "reports/sim_v-jess.html#varying-beta_6",
+    "href": "reports/sim_v-jess.html#varying-beta_6",
+    "title": "Basic Measurement Reactivity Simulation",
+    "section": "Varying \\(\\beta_6\\)",
+    "text": "Varying \\(\\beta_6\\)\n\\(prettest \\times y_{1}\\)\n\n\\(\\beta_6 = -0.75\\)\\(\\beta_6 = 0\\)\\(\\beta_6 = 0.75\\)"
   }
 ]

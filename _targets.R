@@ -3,27 +3,31 @@ library(autometric)
 library(targets)
 library(tarchetypes)
 library(crew)
-library(crew.cluster)
 
 # packages: rstan, tidybayes, mdmb, ggdag
 
 tar_option_set(
   packages = c("tidyverse", "brms", "patchwork"),
   controller = crew_controller_local(
-    workers = 1,
+    workers = 5,
     options_metrics = crew_options_metrics(
-      path = "logs/worker/", 
+      path = "logs/worker/",
       seconds_interval = 1
     )
   ),
   storage = "worker",
   retrieval = "worker",
-  format = "qs"
+  format = "qs",
+  memory = "transient"
+)
+
+tar_config_set(
+  as_job = T
 )
 
 # tar_option_set(
 #   packages = c("tidyverse", "brms", "patchwork"),
-#   debug = "compiled_brms_models_9376f7ff82ef1fae"#, # Set the target you want to debug.
+#   debug = "sim_data_341798b7487bf001 "#, # Set the target you want to debug.
 #   # cue = tar_cue(mode = "never") # Force skip non-debugging outdated targets.
 # )
 
@@ -49,13 +53,13 @@ list(
              pattern = map(gen_data),
              iteration = "list"),
   tar_target(sim_data, gen_data |>
-               fit_models(compiled_brms_models) |>
-               tidy_models(),
+               fit_models(compiled_brms_models),
              # maps over `tar_batch`es
              pattern = map(gen_data)),
   tar_target(axis_limits, identify_axis_limits(sim_data)),
   tar_group_by(sim_data_grouped,
                sim_data |> 
+                 dplyr::rename(tidy = models) |>
                  dplyr::mutate(.by = condition_id,
                                rep = row_number()), 
                condition_id),

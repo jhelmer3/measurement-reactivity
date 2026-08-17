@@ -32,7 +32,7 @@ text_size <- 12
 ```
 
 
-## Model Setup
+# Model Setup
 
 Let's imagine we have the following model for a treatment we want to estimate for a prettest-posttest design:
 
@@ -181,9 +181,9 @@ tibble(r2 = seq(.1, .9, length.out = 50),
 ```
 :::
 
-## Simulation
+# Simulation
 
-### Parameters
+## Parameters
 
 ```{r}
 param_set <- tar_read(param_set, store = here::here("_targets"))
@@ -239,7 +239,9 @@ varying_term_values <- map2(
 )
 ```
 
-### Varying $\beta_4$
+## Varying $\beta_4$
+
+$treatment \times prettest$
 
 ::: {.panel-tabset}
 ```{r}
@@ -262,7 +264,9 @@ for (i in seq_along(estimate_plt_files_idxs[[1]])) {
 ```
 :::
 
-### Varying $\beta_5$
+## Varying $\beta_5$
+
+$treatment \times y_{1}$
 
 ::: {.panel-tabset}
 ```{r}
@@ -279,7 +283,9 @@ for (i in seq_along(estimate_plt_files_idxs[[1]])) {
 ```
 :::
 
-### Varying $\beta_6$
+## Varying $\beta_6$
+
+$prettest \times y_{1}$
 
 ::: {.panel-tabset}
 ```{r}

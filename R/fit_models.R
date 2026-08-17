@@ -1,10 +1,14 @@
 
 fit_models <- function(data, compiled_brms_models) {
+  browser()
   data |>
     left_join(compiled_brms_models |>
                 select(condition_id, compiled_brms_model),
               by = "condition_id") |>
     mutate(
+      # change name to `tidy` at some point before rerun
+      # just to make more consistent. will need to change
+      # `identify_axis_limits()` and manual rename in `_targets.R`
       models = pmap(list(data, params, compiled_brms_model),
                     \(data, params, compiled_brms_model) 
                     fit_and_tidy_one(data, params, compiled_brms_model))
