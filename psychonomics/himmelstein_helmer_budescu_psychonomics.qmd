@@ -1,0 +1,1155 @@
+---
+title: "Combatting Measurement Reactivity in Experimental Design and Inference"
+subtitle: "Annual Meeting of the Psychonomic Society, San Diego, CA"
+date: "November 22, 2026"
+date-format: "MMMM D, YYYY"
+author:
+  - name: "Mark Himmelstein"
+    affiliation: "Georgia Tech"
+  - name: "Jessica Helmer"
+    affiliation: "Georgia Tech"
+  - name: "David V. Budescu"
+    affiliation: "Fordham University"
+format: 
+  revealjs:
+    slide-width: 1920
+    slide-height: 1080
+    theme: ../gt-theme.scss
+    slide-number: true
+    slide-number-format: "c/t"
+    html-math-method: mathjax
+    include-in-header:
+      text: |
+        <script>
+        window.MathJax = {
+          tex: {
+            packages: {'[+]': ['cancel']}
+          },
+          loader: {
+            load: ['[tex]/cancel']
+          }
+        };
+        </script>
+params:
+  v0: false 
+editor: source
+---
+
+## Randomized Experiments
+
+- Behavioral research often deals with experiments where we want to test for positive benefits of some kind of experimental treatment
+- **Examples:**
+    - Does a new medication improve mood?
+    - Does a new type of therapy improve well-being?
+    - Does an anti-smoking campaign increase likelihood of quitting?
+    - **Does a new math curriculum improve learning?** (running example)
+    
+**Core research design:** Randomly assign participants to conditions:
+
+- **Control** 
+- **Treatment** 
+
+## Between Subjects Designs
+
+- Simplest version of randomized design
+- Core model
+
+$$
+\widehat{\text{Math Score}}_i =\;
+\underbrace{\beta_0}_{\substack{\text{Control} \\ \text{Score}}}
++ \underbrace{\beta_1 (\text{Treatment}_i)}_{\substack{\text{Treatment} \\ \text{Effect}}}
+$$
+
+Limitations
+
+- Statistical power
+- Does not allow for treatment effect to vary as a function of baseline ability (moderation)
+
+## Mixed Designs
+
+::: {style="font-size: 0.95em;"}
+
+
+- Adds pretest measurement
+- Controlling for baseline score improves power
+- Allows for moderation
+  - Do people who start worse at math benefit more from the treatment?
+  
+$$
+\widehat{\text{Math Score}}_i =\;
+\underbrace{\beta_0}_{\substack{\text{Control Score} \\ \text{at Mean} \\ \text{Baseline Score}}}
++ \underbrace{\beta_1 (\text{Treatment}_i)}_{\substack{\text{Treatment Effect} \\ \text{at Mean} \\ \text{Baseline Score}}} \\[2.5em]
++ \underbrace{\beta_2 (\text{Baseline}_i)}_{\substack{\text{Base Score Effect} \\ \text{in Control}}}
++ \underbrace{\beta_3 (\text{Treatment}_i)(\text{Baseline}_i)}_{\substack{\text{Difference in Treatment Effect} \\ \text{per unit Change in Base Score} }}
+$$
+
+:::
+
+## Hypothetical Visual
+
+```{r}
+library(ggplot2)
+library(patchwork)
+library(dplyr)
+
+set.seed(42)
+n <- 200
+
+# ---- Simulate data ---------------------------------------------------------
+d <- tibble(
+  id        = 1:n,
+  condition = factor(rep(c("Control", "Treatment"), each = n / 2),
+                     levels = c("Control", "Treatment")),
+  treat     = as.numeric(condition == "Treatment"),
+  pretest   = pmin(pmax(rnorm(n, mean = 70, sd = 12), 25), 100)
+)
+
+clip  <- function(x) pmin(pmax(x, 0), 100)
+pre_c <- d$pretest - 70
+
+# Main effects only (constant +5 treatment effect, beta3 = 0)
+d$post_main <- clip(70 + 0.80 * pre_c + 5 * d$treat + rnorm(n, 0, 6))
+
+# Interaction (effect = 5 - 0.25 * pre_c: bigger benefit for low pretest)
+d$post_int  <- clip(70 + 0.80 * pre_c + (5 - 0.25 * pre_c) * d$treat + rnorm(n, 0, 6))
+
+# ---- Fit models and get predictions at -1, 0, +1 SD of pretest -------------
+pre_m  <- mean(d$pretest)
+pre_sd <- sd(d$pretest)
+lvl    <- c("-1 SD", "Mean", "+1 SD")
+
+pred_grid <- expand.grid(condition = levels(d$condition), pre_level = lvl) %>%
+  mutate(condition = factor(condition, levels = levels(d$condition)),
+         pre_level = factor(pre_level, levels = lvl),
+         pretest   = pre_m + c(-1, 0, 1)[as.integer(pre_level)] * pre_sd)
+
+get_preds <- function(model, newdata) {
+  p <- predict(model, newdata, interval = "confidence")
+  bind_cols(newdata, as_tibble(p))
+}
+
+m_A <- lm(post_main ~ condition, data = d)
+m_B <- lm(post_main ~ condition + pretest, data = d)
+m_C <- lm(post_int  ~ condition * pretest, data = d)
+
+pred_A <- get_preds(m_A, distinct(pred_grid, condition))
+pred_B <- get_preds(m_B, pred_grid)
+pred_C <- get_preds(m_C, pred_grid)
+
+# ---- Plot styling ----------------------------------------------------------
+sd_cols <- c("-1 SD" = "#B45309", "Mean" = "#6B7280", "+1 SD" = "#1D4ED8")
+ylims   <- c(50, 90)
+dodge   <- position_dodge(width = 0.25)
+
+base_theme <- theme_minimal(base_size = 12) +
+  theme(legend.position = "bottom",
+        plot.title = element_text(face = "bold", size = 12),
+        plot.subtitle = element_text(color = "grey40", size = 9),
+        panel.grid.minor = element_blank())
+
+# ---- Panel A: between-subjects ---------------------------------------------
+pA <- ggplot(pred_A, aes(condition, fit, group = 1)) +
+  geom_line(color = "grey30", linewidth = 1.1) +
+  geom_errorbar(aes(ymin = lwr, ymax = upr), width = 0.25, color = "grey30") +
+  geom_point(size = 2, color = "grey30") +
+  coord_cartesian(ylim = ylims) +
+  labs(title = "Between-subjects",
+       x = NULL, y = "Posttest math score (0–100)") +
+  base_theme
+
+# ---- Panel B: mixed, main effects (parallel) -------------------------------
+pB <- ggplot(pred_B, aes(condition, fit, color = pre_level, group = pre_level)) +
+  geom_line(position = dodge, linewidth = 1.1) +
+  geom_errorbar(aes(ymin = lwr, ymax = upr), width = 0.5, position = dodge) +
+  geom_point(position = dodge, size = 2) +
+  scale_color_manual(values = sd_cols, name = "Pretest score") +
+  coord_cartesian(ylim = ylims) +
+  labs(title = "Main Effect Only",
+       x = NULL, y = NULL) +
+  base_theme
+
+# ---- Panel C: mixed, interaction (converging) ------------------------------
+pC <- ggplot(pred_C, aes(condition, fit, color = pre_level, group = pre_level)) +
+  geom_line(position = dodge, linewidth = 1.1) +
+  geom_errorbar(aes(ymin = lwr, ymax = upr), width = 0.5, position = dodge) +
+  geom_point(position = dodge, size = 2) +
+  scale_color_manual(values = sd_cols, name = "Pretest score") +
+  coord_cartesian(ylim = ylims) +
+  labs(title = "Moderation Effect",
+       x = NULL, y = NULL) +
+  base_theme
+
+# ---- Combine ---------------------------------------------------------------
+final_plot <- (pA | pB | pC) +
+  plot_layout(guides = "collect") +
+  plot_annotation(theme = theme(legend.position = "bottom"))
+
+final_plot
+
+# Optional: save at a size that keeps labels from crowding
+# ggsave("three_panel_plot.png", final_plot, width = 11, height = 4.5, dpi = 300)
+```
+
+
+
+## Measurement Reactivity
+
+- What if the **elicitation** of the pretest itself acts as a confounding treatment?
+  - **Example:** Exposure to math test might call attention to important study points
+  - Goal of treatment is not to test how treatment helps pre-tested students, but how it helps students in general (typically who would not be pretested)
+  - Does the act of being pretested affect
+    - Treatment of interest?
+    - Relationship between baseline and final score?
+
+
+## Full Measurement Model
+
+
+
+::: {style="font-size: 0.8em;"}
+
+
+$$
+\widehat{\text{Math Score}}_i =\;
+\underbrace{\beta_0}_{\substack{\text{Control Score} \\ \text{No Pretest} \\ \text{at Mean} \\ \text{Baseline Score}}}
++ \underbrace{\beta_1 (\text{Treatment}_i)}_{\substack{\text{Treatment Effect} \\ \text{No Pretest} \\ \text{at Mean} \\ \text{Baseline Score}}}
++ \underbrace{\beta_2 (\text{Baseline}_i)}_{\substack{\text{Baseline Score Effect} \\ \text{in Control} \\ \text{No Pretest}}}
++ \\[2.5em]
+ \underbrace{\beta_3 (\text{Treatment}_i)(\text{Baseline}_i)}_{\substack{\text{Difference in Treatment Effect} \\ \text{per unit Change in Baseline Score} \\ \text{No Pretest}}} + 
+\underbrace{\beta_4 (\text{Pretest}_i)}_{\substack{\text{Pretest Effect} \\ \text{in Control} \\ \text{at Mean} \\ \text{Baseline Score}}} 
++ \underbrace{\beta_5 (\text{Treatment}_i)(\text{Pretest}_i)}_{\substack{\text{Difference in Treatment Effect} \\ \text{from Pretest} \\ \text{at Mean Baseline Score} \\ \text{\textbf{(Measurement Reactivity)}}}} \\[2.5em]
++ \underbrace{\beta_6 (\text{Pretest}_i)(\text{Baseline}_i)}_{\substack{\text{Difference in Baseline Score Effect} \\ \text{per unit Change in Baseline Score} \\ \text{from Pretest} \\ \text{in Control}}}
++ \underbrace{\beta_7 (\text{Treatment}_i)(\text{Pretest}_i)(\text{Baseline}_i)}_{\substack{\text{Difference in Treatment Effect} \\ \text{per unit Change in Baseline Score} \\ \text{from Pretest}}}
+$$
+
+
+
+:::
+
+
+
+
+
+## Visual
+
+```{r}
+library(ggplot2)
+library(patchwork)
+library(dplyr)
+
+set.seed(42)
+n <- 800   # 200 per cell of the 2 x 2
+
+# ---- Simulate data ---------------------------------------------------------
+d <- tibble(
+  id        = 1:n,
+  condition = factor(rep(c("Control", "Treatment"), times = n / 2),
+                     levels = c("Control", "Treatment")),
+  pretested = rep(c(0, 0, 1, 1), length.out = n),   # fully crossed with condition
+  baseline  = pmin(pmax(rnorm(n, mean = 70, sd = 12), 25), 100)
+) %>%
+  mutate(treat = as.numeric(condition == "Treatment"))
+
+clip <- function(x) pmin(pmax(x, 0), 100)
+b    <- d$baseline - 70   # centered baseline
+tr   <- d$treat
+pt   <- d$pretested
+
+# Population parameters (beta numbering follows the slide)
+b0 <- 70      # control score at mean baseline, no pretest
+b1 <- 5       # treatment effect at mean baseline, no pretest
+b2 <- 0.80    # baseline slope in control, no pretest
+b3 <- 3       # pretest main effect (pretest draws attention to study points)
+b4 <- -0.25   # treatment x baseline (lower baseline -> bigger benefit)
+b5 <- -3      # treatment x pretest (measurement reactivity: weakens treatment effect)
+b6 <- -0.05   # pretest x baseline
+b7 <- 0.10    # treatment x pretest x baseline (moderation is damped by pretest)
+
+d$post <- clip(b0 + b1*tr + b2*b + b3*pt +
+                 b4*tr*b + b5*tr*pt + b6*pt*b + b7*tr*pt*b +
+                 rnorm(n, 0, 6))
+
+# ---- Fit full model and predict at -1, 0, +1 SD of baseline ----------------
+m_full <- lm(post ~ treat * baseline * pretested, data = d)
+
+base_m  <- mean(d$baseline)
+base_sd <- sd(d$baseline)
+lvl     <- c("-1 SD", "Mean", "+1 SD")
+
+pred_grid <- expand.grid(treat = c(0, 1), pre_level = lvl, pretested = c(0, 1)) %>%
+  mutate(condition = factor(ifelse(treat == 1, "Treatment", "Control"),
+                            levels = c("Control", "Treatment")),
+         pre_level = factor(pre_level, levels = lvl),
+         baseline  = base_m + c(-1, 0, 1)[as.integer(pre_level)] * base_sd)
+
+preds <- bind_cols(pred_grid,
+                   as_tibble(predict(m_full, pred_grid, interval = "confidence")))
+
+# ---- Plot styling ----------------------------------------------------------
+sd_cols <- c("-1 SD" = "#B45309", "Mean" = "#6B7280", "+1 SD" = "#1D4ED8")
+ylims   <- c(50, 90)
+dodge   <- position_dodge(width = 0.25)
+
+base_theme <- theme_minimal(base_size = 12) +
+  theme(legend.position = "bottom",
+        plot.title = element_text(face = "bold", size = 12),
+        plot.subtitle = element_text(color = "grey40", size = 9),
+        panel.grid.minor = element_blank())
+
+make_panel <- function(dat, title, ylab = NULL) {
+  ggplot(dat, aes(condition, fit, color = pre_level, group = pre_level)) +
+    geom_line(position = dodge, linewidth = 1.1) +
+    geom_errorbar(aes(ymin = lwr, ymax = upr), width = 0.5, position = dodge) +
+    geom_point(position = dodge, size = 2) +
+    scale_color_manual(values = sd_cols, name = "Baseline score") +
+    coord_cartesian(ylim = ylims) +
+    labs(title = title, x = NULL, y = ylab) +
+    base_theme
+}
+
+pNo  <- make_panel(filter(preds, pretested == 0), "No Pretest",
+                   ylab = "Posttest math score (0–100)")
+pYes <- make_panel(filter(preds, pretested == 1), "Pretest Administered")
+
+# ---- Combine ---------------------------------------------------------------
+final_plot <- (pNo | pYes) +
+  plot_layout(guides = "collect") +
+  plot_annotation(theme = theme(legend.position = "bottom"))
+
+final_plot
+```
+
+## The Problem
+
+- When $\text{Pretest}_i = 0$, that means $\text{Baseline}_i =$ `NA`!
+- Measurement model cannot be estimated under normal conditions because **anyone** with an omitted pretest has missing data
+
+**The solution**
+
+- Planned missing data design
+  - Randomize participants into crossed $2 \text{ (Treatment) } \times 2 \text{ (Pretest})$ design
+  - Collect auxiliary variables
+  - Impute missing $\text{Baseline}_i$ values
+  
+  
+## Missing Data Mechanisms
+
+::: {style="font-size: 0.85em;"}
+
+- $\mathbf{Y}_{com}$: the hypothetically **complete** data, split into $\mathbf{Y}_{obs}$ (observed) and $\mathbf{Y}_{mis}$ (unobserved)
+- $\mathbf{M}$: missingness indicator (1 = missing, 0 = observed)
+
+| Mechanism | Definition | Implication |
+|:----------|:----------:|:------------|
+| **MCAR** <br> Missing Completely at Random | $P(M = 1 \mid Y_{obs}, Y_{mis}) = P(M = 1)$ | Listwise deletion is unbiased, but wastes information |
+| **CMAR** (MAR) <br> Conditionally Missing at Random | $P(M = 1 \mid Y_{obs}, Y_{mis}) = P(M = 1 \mid Y_{obs})$ | Must borrow information from observed correlates |
+| **MNAR** <br> Missing Not at Random | $P(M = 1 \mid Y_{obs}, Y_{mis}) \neq P(M = 1 \mid Y_{obs})$ | Bias can only be addressed with strong assumptions |
+
+:::
+
+## Reactivity as Missing Data
+
+::: {style="font-size: 0.76em;"}
+
+:::: {.columns}
+
+::: {.column width="40%"}
+**Mapping to our example**
+
+- $Y_1 = \text{Baseline}_i$ (pretest score)
+- $Y_2 = \text{Math Score}_i$ (posttest)
+- $M_1 = 1 - \text{Pretest}_i$
+:::
+
+::: {.column width="60%"}
+**Measurement reactivity:** the posttest depends on *whether* baseline was measured
+
+$$
+P(Y_2 \mid Y_1, M_1 = 1) \neq P(Y_2 \mid Y_1, M_1 = 0)
+$$
+
+So we must separately model: 
+
+- $P(Y_2 \mid Y_1, M_1 = 0)$ 
+- $P(Y_2 \mid Y_1, M_1 = 1)$
+:::
+
+::::
+
+**Planned missingness:** Randomize $M_1$ (the Pretest condition) independently of $Y_1$
+
+$$
+P(M_1 = 1 \mid Y_1, A) = P(M_1 = 1)
+$$
+
+- $M_1$ **is** related to $Y_2$, but as a **cause** of $Y_2$, not a selection mechanism
+- We model it directly with the pretest terms in the measurement model
+- Missingness is fully determined by pretest condition. Baseline is **CMAR by design**
+
+:::
+
+## What Can We Do?
+
+::: {style="font-size: 0.8em;"}
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+**Measure $Y_1$ when $\text{Pretest}_i = 1$**
+
+$$
+P(Y_2 \mid \text{Pretest}, \text{Treatment})
+$$
+
+**Benefits:**
+
+- Treatment effect without pretest ($\beta_1$)
+- Can test for measurement reactivity ($\beta_3$, $\beta_5$)
+
+**Limitations:**
+
+- Statistically just a between subjects design
+  - No more moderation
+  - Weaker statistical power
+:::
+
+::: {.column width="50%"}
+**Our goal: bring $Y_1$ back**
+
+$$
+P(Y_2 \mid Y_1, \text{Pretest}, \text{Treatment})
+$$
+
+**Benefits:**
+
+- Estimate full measurement model ($\beta_0$ – $\beta_7$)
+- Greater power for treatment and reactivity effects
+- Reintroduces moderation effects with baseline
+
+**Limitations**
+
+- How do we estimate $Y_1$?
+
+:::
+
+::::
+
+:::
+
+## Auxiliary Variables
+
+::: {style="font-size: 0.8em;"}
+
+- **Auxiliary variables** ($A$): Outside measurement model, but informative about missing $Y_1$
+- The joint model factors into two pieces, estimated **together**:
+
+$$
+P(Y_2, Y_1 \mid A, \text{Pretest}, \text{Treatment}) =
+\underbrace{P(Y_2 \mid Y_1, \text{Pretest}, \text{Treatment})}_{\text{Measurement model}}
+\times
+\underbrace{P(Y_1 \mid A)}_{\text{Imputation model}}
+$$
+
+- Missing $Y_1$ are drawn from plausible values given **both** $A$ and $Y_2$:
+
+$$
+P(Y_{1,\text{mis}} \mid Y_2, A, \text{Pretest}, \text{Treatment}) \;\propto\;
+P(Y_2 \mid Y_1, \text{Pretest}, \text{Treatment}) \times P(Y_1 \mid A)
+$$
+
+- Randomization $\Rightarrow$ $P(Y_1 \mid A)$ is the same in both Pretest groups, so the pretested group shows how $A$ predicts $Y_1$
+- **Requirements:** $A$ is unaffected by the pretest (e.g., measured before randomization), relates to $Y_2$ only through $Y_1$, and correlates strongly enough with $Y_1$ to be informative
+
+:::
+
+## Missing Data Methods
+
+::::: {style="font-size: 0.7em;"}
+
+:::: {.columns}
+
+::: {.column width="33%"}
+
+**Maximum Likelihood**
+
+`mdmb::frm_em()`
+
+**How it works:**
+
+- Measurement model + model for Baseline written as one factored likelihood
+- Estimated with maximum likelihood (EM algorithm)
+
+**Inference:**
+
+- NHST
+
+
+
+:::
+
+::: {.column width="33%"}
+
+**Multiple Imputation**
+
+Blimp via `rblimp`, pooled with `mitml`
+
+**How it works:**
+
+1. Bayesian MCMC draws $m$ plausible Baselines for each non-pretested participant
+2. Measurement model fit to each completed dataset with OLS
+3. Results pooled with Rubin's rules
+
+**Inference:**
+
+- NHST
+
+
+:::
+
+::: {.column width="33%"}
+
+**Fully Bayesian**
+
+`brms` with `mi()`, Stan via `cmdstanr`
+
+**How it works:**
+
+- Measurement model and model for Baseline estimated jointly in one model
+- Missing Baselines are treated as parameters with their own posterior
+- One joint likelihood + priors = posterior for everything
+
+**Inference:**
+
+- Bayes
+
+
+:::
+
+::::
+
+**All three use the same information** (A, Math Score, and the measurement model), so all three should recover $\beta_0$–$\beta_7$
+
+:::::
+
+```{r}
+#| label: sim-setup
+#| include: false
+
+# =============================================================================
+# Simulation: manipulating beta_5 (Treatment x Pretest) and
+#             beta_7 (Treatment x Pretest x Baseline), one at a time
+#
+# Same logic as Jess' targets pipeline (R/ folder of the repo), without targets:
+#   - data generation follows R/generate_data.R
+#   - six methods follow R/fit_and_tidy_one.R:
+#       lm_true, lm_between, lm_pretest, fiml (mdmb::frm_em),
+#       mi, brms (joint model with mi())
+#   - one change from Jess': MI uses model-based (factored regression)
+#     imputation in Blimp via rblimp instead of mice, so the imputations
+#     account for the outcome and the interactions. Pooling still uses mitml.
+#   - plots follow R/plt_estimates.R (violins + jitter, shared axis limits)
+#
+# Notation follows the measurement Model slide, NOT Jess' numbering.
+# Mapping (slides <- Jess):
+#   beta2 Baseline                         <- beta3 (y1_z)
+#   beta3 Treatment x Baseline             <- beta5
+#   beta4 Pretest                          <- beta2 (pretest)
+#   beta5 Treatment x Pretest              <- beta4
+#   beta6 Pretest x Baseline               <- beta6
+#   beta7 Treatment x Pretest x Baseline   <- beta7
+# Variable names: Baseline = y1_z, Math Score (posttest) = y2.
+#
+# Results are saved to an RDS. The simulation runs only if that file is
+# missing (or rerun_sim is TRUE); otherwise the RDS is loaded.
+# After changing settings, delete the RDS (or set rerun_sim <- TRUE once).
+# =============================================================================
+
+library(tidyverse)
+library(patchwork)
+library(brms)
+
+rerun_sim <- FALSE
+sim_file  <- here::here("outputs", "sim_beta5_beta7.rds")
+ckpt_dir  <- here::here("outputs", "sim_beta5_beta7_checkpoints")
+
+# Number of replications fit at the same time. Each worker runs its 4 chains
+# one after another, so this is roughly the number of cores in use.
+# Parallel workers need the cmdstanr backend; set to 1 if using rstan.
+n_workers <- 6
+
+# ---- Design settings --------------------------------------------------------
+K_aux  <- 3      # number of auxiliary variables
+r2_aux <- 0.33   # R^2 of Baseline on A
+
+sim_settings <- list(
+  n_reps         = 200,
+  N              = 600,
+  K              = K_aux,
+  p_pretest      = 1/3,
+  p_treatment    = 0.5,
+  sigma_baseline = sqrt(K_aux * (1 - r2_aux) / r2_aux),  # gives R^2_A = r2_aux
+  sigma          = 1
+)
+
+method_settings <- list(
+  n_imps       = 100,    # MI: number of imputations (Jess' n_imps)
+  blimp_burn   = 2000,   # MI: Blimp burn-in iterations
+  blimp_iter   = 10000,  # MI: Blimp post-burn-in iterations (imputations spread across these)
+  blimp_chains = 2,      # MI: Blimp chains
+  n_nodes = 30,          # ML: integration nodes for Baseline (Jess' nodes)
+  chains  = 4,           # Bayes
+  iter    = 2000,    
+  warmup         = 1000,   # Bayes
+  init           = 0,      # Bayes: start all chains at 0
+  adapt_delta    = 0.95,   # Bayes: smaller steps, fewer stuck/divergent chains
+  rhat_threshold = 1.05,   # Bayes: refit once with 2x iterations if exceeded# Bayes
+  backend = "cmdstanr"   # Bayes (Jess' backend); "rstan" also works with n_workers = 1
+)
+
+# Population values held fixed (slide numbering)
+betas_fixed <- c(
+  beta0 = 0,     # Control, no pretest, mean baseline
+  beta1 = 0.3,   # Treatment, no pretest, mean baseline
+  beta2 = 1,     # Baseline, control, no pretest
+  beta3 = -.1,   # Treatment x Baseline
+  beta4 = 0.2,   # Pretest, control, mean baseline
+  beta5 = 0,     # Treatment x Pretest (measurement reactivity)
+  beta6 = 0,     # Pretest x Baseline
+  beta7 = 0      # Treatment x Pretest x Baseline
+)
+
+# Terms varied one at a time (all others stay at betas_fixed).
+# beta5 values match Jess' c(-.75, 0, .75) * beta1.
+vary <- list(
+  beta5 = c(-0.225, 0, 0.225),
+  beta7 = c(-0.225, 0, 0.225)
+)
+
+# ---- Labels -----------------------------------------------------------------
+beta_terms <- c(
+  beta0 = "Intercept",
+  beta1 = "treatment",
+  beta2 = "baseline",
+  beta3 = "baseline:treatment",
+  beta4 = "pretest",
+  beta5 = "pretest:treatment",
+  beta6 = "baseline:pretest",
+  beta7 = "baseline:pretest:treatment"
+)
+
+# Panel titles (plotmath), in plotting order
+term_labels <- c(
+  beta0    = 'beta[0]*": Intercept"',
+  beta1    = 'beta[1]*": Treatment"',
+  beta2    = 'beta[2]*": Baseline"',
+  beta3    = 'beta[3]*": Treatment × Baseline"',
+  beta4    = 'beta[4]*": Pretest"',
+  beta5    = 'beta[5]*": Treatment × Pretest"',
+  beta6    = 'beta[6]*": Pretest × Baseline"',
+  beta7    = 'beta[7]*": Treatment × Pretest × Baseline"',
+  sigma    = 'sigma',
+  cohens_d = '"Cohen\'s "*italic(d)'
+)
+
+# Jess' method order and colors (R/init_method_levels.R)
+method_levels <- tibble(
+  method = c("lm_true", "lm_between", "lm_pretest", "fiml", "mi", "brms"),
+  label  = c("True", "Between", "Mixed", "ML", "MI", "Bayes"),
+  color  = c("#D4A8BC", "#A4BFD9", "#88AB7B", "#d29979", "#b39eb5", "#9DC3C1")
+)
+
+# ---- Conditions -------------------------------------------------------------
+make_conditions <- function(betas_fixed, vary) {
+  imap(vary, \(vals, term) map(vals, \(v) replace(betas_fixed, term, v))) |>
+    list_flatten() |>
+    map(\(b) as_tibble_row(as.list(b))) |>
+    list_rbind() |>
+    distinct() |>
+    mutate(condition_id = row_number(), .before = 1)
+}
+
+# Conditions where `term` varies and every other varied term is at its fixed value
+conditions_for <- function(conditions, term, betas_fixed, vary) {
+  others <- setdiff(names(vary), term)
+  keep <- reduce(others,
+                 \(acc, o) acc & conditions[[o]] == betas_fixed[[o]],
+                 .init = rep(TRUE, nrow(conditions)))
+  conditions[keep, ] |> arrange(.data[[term]])
+}
+
+# ---- Data generation (R/generate_data.R) ------------------------------------
+# A ~ MVN(0, I); Y1 = sum(A) + e, e ~ N(0, sigma_baseline);
+# Baseline = Y1 / sqrt(K + sigma_baseline^2).
+# Three Math Scores per person, each with its own error:
+#   posttest         : with the person's assigned Pretest
+#   posttest_between : as if nobody were pretested  (Pretest = 0)
+#   posttest_pretest : as if everybody were pretested (Pretest = 1)
+simulate_data <- function(N, K, p_pretest, p_treatment, sigma_baseline, sigma,
+                          betas, ...) {
+  aux <- matrix(rnorm(N * K), N, K,
+                dimnames = list(NULL, paste0("aux", seq_len(K))))
+  y1 <- rowSums(aux) + rnorm(N, 0, sigma_baseline)
+  baseline_true <- y1 / sqrt(K + sigma_baseline^2)
+
+  n_p <- round(N * p_pretest)
+  n_t <- round(N * p_treatment)
+  pretest   <- sample(c(rep(1, n_p), rep(0, N - n_p)))
+  treatment <- sample(c(rep(1, n_t), rep(0, N - n_t)))
+
+  b <- as.list(betas)
+  mu <- function(pretest) {
+    b$beta0 +
+      b$beta1 * treatment +
+      b$beta2 * baseline_true +
+      b$beta3 * treatment * baseline_true +
+      b$beta4 * pretest +
+      b$beta5 * treatment * pretest +
+      b$beta6 * pretest * baseline_true +
+      b$beta7 * treatment * pretest * baseline_true
+  }
+
+  tibble(
+    id = seq_len(N),
+    treatment, pretest, baseline_true,
+    baseline         = if_else(pretest == 1, baseline_true, NA_real_),  # planned missingness
+    posttest         = rnorm(N, mu(pretest), sigma),
+    posttest_between = rnorm(N, mu(0), sigma),
+    posttest_pretest = rnorm(N, mu(1), sigma)
+  ) |>
+    bind_cols(as_tibble(aux))
+}
+
+# ---- Methods (R/fit_and_tidy_one.R and the R/*_model.R files) ---------------
+# Each returns tibble(term, estimate); terms are raw model names plus "sigma".
+
+fit_lm <- function(formula, data) {
+  fit <- lm(formula, data = data)
+  tibble(term = names(coef(fit)), estimate = unname(coef(fit))) |>
+    add_row(term = "sigma", estimate = sigma(fit))
+}
+
+# ML: factored likelihood with numerical integration over missing Baseline
+# (R/fiml_model.R). For K = 3 this is exactly Jess' model:
+#   aux1 ~ aux2 + aux3 + y2 + y1_z; aux2 ~ aux3 + y2 + y1_z; aux3 ~ y2 + y1_z;
+#   y2 ~ treatment * pretest * y1_z; y1_z ~ 1
+fit_fiml <- function(d, K, n_nodes) {
+  dat <- d |>
+    select(posttest, treatment, pretest, baseline, starts_with("aux")) |>
+    as.data.frame()
+  aux_names <- paste0("aux", seq_len(K))
+
+  ind <- map(seq_len(K), \(k) list(
+    model = "linreg",
+    formula = as.formula(paste(
+      aux_names[k], "~",
+      paste(c(aux_names[-seq_len(k)], "posttest", "baseline"), collapse = " + ")
+    ))
+  ))
+  names(ind) <- paste0("model.s", seq_len(K))
+  ind$model.baseline <- list(
+    model = "linreg", formula = baseline ~ 1,
+    nodes = seq(min(dat$baseline, na.rm = TRUE), max(dat$baseline, na.rm = TRUE),
+                length.out = n_nodes)
+  )
+  dep <- list(model = "linreg", formula = posttest ~ treatment * pretest * baseline)
+
+  utils::capture.output(fit <- mdmb::frm_em(dat = dat, dep = dep, ind = ind))
+
+  # R/tidy_frm_em.R
+  fit$partable |>
+    as_tibble() |>
+    filter(str_detect(parm, "^posttest ")) |>
+    transmute(term = str_remove_all(parm, "^posttest |ON "), estimate = est)
+}
+
+# MI: model-based (factored regression) imputation in Blimp via rblimp.
+# Blimp draws each missing Baseline from a model that combines
+#   posttest ~ treatment * pretest * baseline   (analysis model, all interactions)
+#   baseline ~ aux1 + ... + auxK                (Baseline model)
+# so the imputations account for each person's Math Score and for
+# Pretest-specific slopes. Complete variables are treated as fixed.
+# Each imputed dataset is analyzed with lm() and pooled with mitml
+# (Rubin's rules), as in Jess' R/mi_model.R and R/tidy_mitml.R.
+fit_mi <- function(d, K, ms) {
+  aux_names <- paste0("aux", seq_len(K))
+  dat <- d |>
+    select(posttest, treatment, pretest, baseline, all_of(aux_names)) |>
+    as.data.frame()
+
+  fit <- rblimp::rblimp(
+    model = c(
+      paste("posttest ~ treatment pretest baseline treatment*pretest",
+            "treatment*baseline pretest*baseline treatment*pretest*baseline"),
+      paste("baseline ~", paste(aux_names, collapse = " "))
+    ),
+    data   = dat,
+    fixed  = as.formula(paste("~", paste(c("treatment", "pretest", aux_names),
+                                         collapse = " + "))),
+    burn   = ms$blimp_burn,
+    iter   = ms$blimp_iter,
+    chains = ms$blimp_chains,
+    nimps  = ms$n_imps,
+    seed   = sample.int(1e8, 1),
+    add_save     = FALSE,
+    print_output = FALSE
+  )
+
+  # Take the imputed Baseline from each dataset; everything else is observed
+  fits <- map(rblimp::as.mitml(fit), \(imp) lm(
+    posttest ~ treatment * pretest * baseline,
+    data = mutate(dat, baseline = imp$baseline)
+  ))
+  pooled <- mitml::testEstimates(fits, extra.pars = TRUE)
+
+  tibble(term = rownames(pooled$estimates),
+         estimate = unname(pooled$estimates[, "Estimate"])) |>
+    # extra.pars is the pooled residual *variance*, so take the square root
+    add_row(term = "sigma", estimate = sqrt(pooled$extra.pars[1, 1]))
+}
+
+# Bayes: joint model with mi() (R/compile_brms_model.R, R/brms_model.R).
+# For K = 3 this is exactly Jess' formula.
+make_brms_formula <- function(K) {
+  aux_names <- paste0("aux", seq_len(K))
+  aux_forms <- map(seq_len(K), \(k) bf(as.formula(paste(
+    aux_names[k], "~",
+    paste(c(aux_names[-seq_len(k)], "posttest", "mi(baseline)"), collapse = " + ")
+  ))))
+  reduce(
+    c(aux_forms,
+      list(bf(posttest ~ treatment * pretest * mi(baseline)),
+           bf(baseline | mi() ~ 1))),
+    `+`
+  ) + set_rescor(FALSE)
+}
+
+prep_brms_data <- function(d) {
+  select(d, posttest, treatment, pretest, baseline, starts_with("aux"))
+}
+
+# Compiled once per condition on that condition's first dataset, so default
+# priors come from that dataset (same as Jess').
+compile_brms <- function(d, K, backend) {
+  suppressWarnings(suppressMessages(
+    brm(make_brms_formula(K), data = prep_brms_data(d), backend = backend,
+        chains = 1, warmup = 1, iter = 2, refresh = 0, silent = 2)
+  ))
+}
+
+fit_bayes <- function(d, template, ms, cores) {
+  fit_once <- function(iter, warmup) {
+    suppressWarnings(suppressMessages(
+      update(template, newdata = prep_brms_data(d), recompile = FALSE,
+             chains = ms$chains, iter = iter, warmup = warmup, cores = cores,
+             init = ms$init, control = list(adapt_delta = ms$adapt_delta),
+             refresh = 0, silent = 2,
+             seed = sample.int(.Machine$integer.max, 1))
+    ))
+  }
+
+  fit      <- fit_once(ms$iter, ms$warmup)
+  rhat_max <- suppressWarnings(max(rhat(fit), na.rm = TRUE))
+  refit    <- FALSE
+  if (!is.finite(rhat_max) || rhat_max > ms$rhat_threshold) {
+    fit      <- fit_once(2 * ms$iter, 2 * ms$warmup)
+    rhat_max <- suppressWarnings(max(rhat(fit), na.rm = TRUE))
+    refit    <- TRUE
+  }
+  np <- nuts_params(fit)
+  n_divergent <- sum(np$Value[np$Parameter == "divergent__"])
+
+  fe <- fixef(fit)  # posterior means
+  fe <- fe[startsWith(rownames(fe), "posttest_"), , drop = FALSE]
+
+  tibble(term = sub("^posttest_", "", rownames(fe)),
+         estimate = unname(fe[, "Estimate"])) |>
+    add_row(term = "sigma",
+            estimate = unname(posterior_summary(fit, variable = "sigma_posttest")[, "Estimate"])) |>
+    mutate(rhat_max = rhat_max, n_divergent = n_divergent, refit = refit)
+}
+# Map raw term names from any method to beta0-beta7
+term_to_beta <- function(term) {
+  key <- term |>
+    str_remove_all("[()]") |>
+    str_replace_all("mibaseline", "baseline") |>
+    str_split(":") |>
+    map_chr(\(x) paste(sort(x), collapse = ":"))
+  names(beta_terms)[match(key, beta_terms)]
+}
+
+fit_methods <- function(d, template, K, ms, cores) {
+  d_true <- mutate(d, baseline = baseline_true)
+
+  est <- bind_rows(
+    fit_lm(posttest ~ treatment * pretest * baseline, d_true) |> mutate(method = "lm_true"),
+    fit_lm(posttest_between ~ treatment, d)                   |> mutate(method = "lm_between"),
+    fit_lm(posttest_pretest ~ treatment * baseline, d_true)   |> mutate(method = "lm_pretest"),
+    fit_fiml(d, K, ms$n_nodes)                                |> mutate(method = "fiml"),
+    fit_mi(d, K, ms)                                          |> mutate(method = "mi"),
+    fit_bayes(d, template, ms, cores)                         |> mutate(method = "brms")
+  ) |>
+    mutate(term = if_else(term == "sigma", "sigma", term_to_beta(term))) |>
+    filter(!is.na(term))
+
+  # Cohen's d = Treatment / sigma, per method
+  cohens_d <- est |>
+    filter(term %in% c("beta1", "sigma")) |>
+    pivot_wider(id_cols = method, names_from = term, values_from = estimate) |>
+    transmute(method, term = "cohens_d", estimate = beta1 / sigma)
+
+  bind_rows(est, cohens_d)
+}
+
+# ---- Run --------------------------------------------------------------------
+run_condition <- function(cond, settings, ms, n_workers, ckpt_dir, seed) {
+  betas <- unlist(cond[names(beta_terms)])
+  ckpt  <- file.path(ckpt_dir, paste0(
+    "condition_", rlang::hash(list(settings, ms, betas, seed)), ".rds"
+  ))
+  if (file.exists(ckpt)) {
+    return(readRDS(ckpt) |> mutate(condition_id = cond$condition_id))
+  }
+
+  set.seed(seed + cond$condition_id)
+  template <- compile_brms(exec(simulate_data, !!!settings, betas = betas),
+                           settings$K, ms$backend)
+  cores <- if (n_workers > 1) 1 else min(ms$chains, parallel::detectCores())
+
+  res <- progressr::with_progress({
+    p <- progressr::progressor(steps = settings$n_reps)
+    furrr::future_map(seq_len(settings$n_reps), \(r) {
+      d <- exec(simulate_data, !!!settings, betas = betas)
+      out <- fit_methods(d, template, settings$K, ms, cores) |>
+        mutate(rep = r, .before = 1)
+      p()
+      out
+    }, .options = furrr::furrr_options(
+      seed = seed + cond$condition_id,
+      packages = c("tidyverse", "brms")
+    ))
+  }) |>
+    list_rbind() |>
+    mutate(condition_id = cond$condition_id, .before = 1)
+
+  saveRDS(res, ckpt)
+  res
+}
+
+if (rerun_sim || !file.exists(sim_file)) {
+  if (rerun_sim) unlink(ckpt_dir, recursive = TRUE)
+  dir.create(ckpt_dir, showWarnings = FALSE, recursive = TRUE)
+
+  conditions <- make_conditions(betas_fixed, vary)
+
+  progressr::handlers("cli")
+  options(check_blimp_update = FALSE)
+  options(future.globals.maxSize = 2 * 1024^3)
+  if (n_workers > 1) {
+    future::plan(future::multisession, workers = n_workers)
+  } else {
+    future::plan(future::sequential)
+  }
+
+  estimates <- map(seq_len(nrow(conditions)), \(i) {
+    message(sprintf("Condition %d of %d", i, nrow(conditions)))
+    run_condition(conditions[i, ], sim_settings, method_settings,
+                  n_workers, ckpt_dir, seed = 2026)
+  }) |>
+    list_rbind()
+
+  future::plan(future::sequential)
+
+  truth <- conditions |>
+    mutate(sigma = sim_settings$sigma, cohens_d = beta1 / sigma) |>
+    pivot_longer(-condition_id, names_to = "term", values_to = "true_value")
+
+  # Shared y-axis limits per term across all conditions (R/identify_axis_limits.R)
+  axis_limits <- estimates |>
+    summarise(.by = term, min_est = min(estimate), max_est = max(estimate))
+
+  sim_summary <- estimates |>
+    left_join(truth, by = c("condition_id", "term")) |>
+    summarise(
+      .by = c(condition_id, method, term),
+      true_value = first(true_value),
+      mean_est   = mean(estimate),
+      bias       = mean(estimate - true_value),
+      rmse       = sqrt(mean((estimate - true_value)^2))
+    )
+
+  sim <- list(
+    settings        = sim_settings,
+    method_settings = method_settings,
+    betas_fixed     = betas_fixed,
+    vary            = vary,
+    conditions      = conditions,
+    truth           = truth,
+    estimates       = estimates,
+    axis_limits     = axis_limits,
+    summary         = sim_summary,
+    created         = Sys.time()
+  )
+  saveRDS(sim, sim_file)
+} else {
+  sim <- readRDS(sim_file)
+}
+
+# ---- Plotting (R/plt_estimates.R) -------------------------------------------
+# Robust y-limits per term, shared across conditions so tabs are comparable:
+# middle 99% of estimates, always including the true values.
+plot_limits <- function(sim, term) {
+  est <- sim$estimates$estimate[sim$estimates$term == term]
+  tv  <- sim$truth$true_value[sim$truth$term == term]
+  lim <- range(quantile(est, c(.005, .995), na.rm = TRUE), tv)
+  lim + c(-1, 1) * 0.05 * diff(lim)
+}
+
+plot_estimates <- function(sim, cond_id, terms = names(term_labels),
+                           ncol = min(length(terms), 4)) {
+  est   <- filter(sim$estimates, condition_id == cond_id)
+  truth <- filter(sim$truth, condition_id == cond_id)
+  cols  <- deframe(select(method_levels, method, color))
+  n_benchmark <- 3  # True, Between, Mixed; the rest are planned missingness
+
+  terms |>
+    map(\(t) {
+      d  <- filter(est, term == t)
+      tv <- truth$true_value[truth$term == t]
+      true_line <- tibble(method = method_levels$method, true_value = tv)
+
+      ggplot(d, aes(x = method, y = estimate, color = method, fill = method)) +
+        # shade the planned missingness methods
+        annotate("rect", xmin = n_benchmark + 0.5, xmax = nrow(method_levels) + 0.5,
+                 ymin = -Inf, ymax = Inf, fill = "grey50", alpha = 0.08) +
+        geom_line(data = true_line, aes(x = method, y = true_value, group = 1),
+                  inherit.aes = FALSE, color = "black", linewidth = 0.8,
+                  linetype = "dashed") +
+        geom_violin(color = NA, alpha = .6) +
+        geom_jitter(width = .15, height = 0, alpha = .35, shape = 16, size = 1.8) +
+        stat_summary(fun = mean, geom = "point", shape = 23, size = 4,
+                     fill = "white", color = "black", stroke = 1) +
+        scale_x_discrete(NULL, limits = method_levels$method,
+                         labels = method_levels$label) +
+        scale_color_manual(values = cols, aesthetics = c("color", "fill")) +
+        guides(y = guide_axis(cap = TRUE), x = guide_axis(cap = TRUE),
+               color = "none", fill = "none") +
+        coord_cartesian(ylim = plot_limits(sim, t), clip = "on") +
+        labs(title = str2expression(term_labels[[t]]), y = NULL) +
+        theme_classic(base_size = 20) +
+        theme(plot.title = element_text(size = 22, hjust = 0.5),
+              axis.text.x = element_text(angle = 30, hjust = 1, vjust = 1))
+    }) |>
+    wrap_plots(ncol = ncol) +
+    plot_annotation(
+      caption = "Dashed line = true value  ◇ = mean estimate  Shaded = planned missing designs",
+      theme = theme(plot.caption = element_text(size = 16, hjust = 0.5))
+    )
+}
+
+# One tab per value of `term`; `panels` picks which parameters to plot
+print_tabs <- function(sim, term, panels = names(term_labels), ...) {
+  conds  <- conditions_for(sim$conditions, term, sim$betas_fixed, sim$vary)
+  symbol <- str_replace(term, "beta", "\\\\beta_")
+  for (i in seq_len(nrow(conds))) {
+    cat(sprintf("\n\n### $%s = %g$\n\n", symbol, conds[[term]][i]))
+    print(plot_estimates(sim, conds$condition_id[i], terms = panels, ...))
+    cat("\n\n")
+  }
+}
+```
+
+## Simulation Design
+
+::: {style="font-size: 0.75em;"}
+
+$$
+\widehat{\text{Math Score}}_i = \beta_0 + \beta_1 (\text{Treatment}_i) + \beta_2 (\text{Baseline}_i) + \beta_3 (\text{Treatment}_i)(\text{Baseline}_i) + \beta_4 (\text{Pretest}_i) \\[1em]
++ \underbrace{\beta_5 (\text{Treatment}_i)(\text{Pretest}_i)}_{\text{Manipulated}} + \beta_6 (\text{Pretest}_i)(\text{Baseline}_i) + \underbrace{\beta_7 (\text{Treatment}_i)(\text{Pretest}_i)(\text{Baseline}_i)}_{\text{Manipulated}}
+$$
+
+$$
+A_{ik} \sim N(0, 1), \qquad
+\text{Baseline}_i = \frac{\sum_{k=1}^{K} A_{ik} + \varepsilon_i}{\sqrt{K + \sigma_{B}^2}}, \qquad
+\varepsilon_i \sim N(0, \sigma_{B}^2)
+$$
+
+- $N =$ `r sim$settings$N`, $K =$ `r sim$settings$K` auxiliary variables, $R^2_{A} =$ `r with(sim$settings, round(K / (K + sigma_baseline^2), 2))`
+- $P(\text{Pretest}_i = 1) =$ `r round(sim$settings$p_pretest, 2)`, $P(\text{Treatment}_i = 1) =$ `r sim$settings$p_treatment`
+- $\beta_0 =$ `r sim$betas_fixed[["beta0"]]`, $\beta_1 =$ `r sim$betas_fixed[["beta1"]]`, $\beta_2 =$ `r sim$betas_fixed[["beta2"]]`, $\beta_3 =$ `r sim$betas_fixed[["beta3"]]`, $\beta_4 =$ `r sim$betas_fixed[["beta4"]]`, $\beta_6 =$ `r sim$betas_fixed[["beta6"]]`
+- Varied one at a time: $\beta_5 \in \{$`r paste(sim$vary$beta5, collapse = ", ")`$\}$ with $\beta_7 = 0$, and $\beta_7 \in \{$`r paste(sim$vary$beta7, collapse = ", ")`$\}$ with $\beta_5 = 0$
+- `r nrow(sim$conditions)` conditions, `r sim$settings$n_reps` replications each
+
+:::
+
+## Methods Compared
+
+::: {style="font-size: 0.85em;"}
+
+**Benchmarks** (not possible in practice or a different design)
+
+- **True**: Actual measurement model parameters (not directly observable)
+- **Between**: Between subjects design (no pretest)
+- **Mixed**: Mixed (pretest-posttest) design
+
+**Planned missingness**: Baseline observed only when $\text{Pretest}_i = 1$; three ways to recover it using $A$
+
+- **ML**: full-information maximum likelihood (`mdmb::frm_em`)
+- **MI**: model-based multiple imputation with factored regression (Blimp via `rblimp`, $m =$ `r sim$method_settings$n_imps`), pooled with Rubin's rules (`mitml`)
+- **Bayes**: fully Bayesian joint model with Baseline as missing data (`brms`)
+
+:::
+
+## Varying $\beta_5$ {.scrollable}
+
+What happens with Measurement Reactivity?
+
+::: {.panel-tabset}
+
+```{r}
+#| results: asis
+#| echo: false
+#| fig-width: 16
+#| fig-height: 9
+#| out-width: 100%
+print_tabs(sim, "beta5", panels = c(paste0("beta", 0:7), "sigma"), ncol = 3)
+```
+
+:::
+
+## Varying $\beta_7$ {.scrollable}
+
+What happens with measurement reactivity **moderated by baseline**?
+
+
+::: {.panel-tabset}
+
+```{r}
+#| results: asis
+#| echo: false
+#| fig-width: 16
+#| fig-height: 9
+#| out-width: 100%
+print_tabs(sim, "beta7", panels = c(paste0("beta", 0:7), "sigma"), ncol = 3)
+```
+
+:::
+
+## Take Home
+
+::::: {style="font-size: 0.85em;"}
+
+- **Between subjects** designs
+  - Sacrifice power (larger: $\sigma$, variance in $\beta_1$ estimates)
+  - Do not permit varying levels of treatment effect by baseline trait/ability levels
+- **Mixed** designs
+  - Risk triggering measurement reactivity, biasing treatment effects
+- **Planned missing** designs
+  - Test whether measurement reactivity is present
+  - Recover ecologically valid treatment effects in the absence of pretest measurement if it is
+  - Permit varying levels of treatment effect by baseline/trait ability
+  - More research is needed to:
+    - Test optimal designs for statistical power
+    - Validate on real world data
+
+:::::
