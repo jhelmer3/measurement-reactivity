@@ -321,16 +321,24 @@ final_plot
 
 ## The Problem
 
+::: {style="font-size: 0.85em;"}
+
 - When $\text{Pretest}_i = 0$, that means $\text{Baseline}_i =$ `NA`!
 - Measurement model cannot be estimated under normal conditions because **anyone** with an omitted pretest has missing data
 
-**The solution**
+**Early solution**
 
-- Planned missing data design
+- Solomon Four Group Design
   - Randomize participants into crossed $2 \text{ (Treatment) } \times 2 \text{ (Pretest})$ design
+  - Identifies but does not correct for measurement reactivity when present
+
+**New Contribution**
+- Planned missing data design
   - Collect auxiliary variables
   - Impute missing $\text{Baseline}_i$ values
-  
+  - Identifies **and** corrects for measurement reactivity
+
+:::
   
 ## Missing Data Mechanisms
 
@@ -376,15 +384,15 @@ So we must separately model:
 
 ::::
 
-**Planned missingness:** Randomize $M_1$ (the Pretest condition) independently of $Y_1$
+
+**Planned missingness:** randomize $M_1$ (the Pretest condition) independently of $Y_1$
+- Conditioning on the observed Pretest condition makes $Y_1$ ignorable:
 
 $$
-P(M_1 = 1 \mid Y_1, A) = P(M_1 = 1)
+P(M_1 = 1 \mid Y_1, Y_2, \text{Pretest}) = P(M_1 = 1 \mid \text{Pretest})
 $$
 
-- $M_1$ **is** related to $Y_2$, but as a **cause** of $Y_2$, not a selection mechanism
-- We model it directly with the pretest terms in the measurement model
-- Missingness is fully determined by pretest condition. Baseline is **CMAR by design**
+- Baseline is **CMAR by design**
 
 :::
 
@@ -396,7 +404,7 @@ $$
 
 ::: {.column width="50%"}
 
-**Measure $Y_1$ when $\text{Pretest}_i = 1$**
+**Measure $Y_1$ only when $\text{Pretest}_i = 1$** (Solomon Four Group Design)
 
 $$
 P(Y_2 \mid \text{Pretest}, \text{Treatment})
@@ -409,9 +417,10 @@ $$
 
 **Limitations:**
 
-- Statistically just a between subjects design
+- Statistically just a lower-powered between subjects design if measurement reactivity is present
   - No more moderation
   - Weaker statistical power
+  
 :::
 
 ::: {.column width="50%"}
@@ -568,6 +577,8 @@ Blimp via `rblimp`, pooled with `mitml`
 library(tidyverse)
 library(patchwork)
 library(brms)
+
+print_version <- "print" %in% strsplit(Sys.getenv("QUARTO_PROFILE"), ",")[[1]]
 
 rerun_sim <- FALSE
 sim_file  <- here::here("outputs", "sim_beta5_beta7.rds")
@@ -1057,6 +1068,37 @@ print_tabs <- function(sim, term, panels = names(term_labels), ...) {
     cat("\n\n")
   }
 }
+
+# Writes the results slides for one varied term:
+#   online version: one scrollable slide with a tab per condition
+#   print version:  one slide per condition x panel group, no scrolling
+results_slides <- function(sim, term, subtitle, print_version,
+                           html_panels = c(paste0("beta", 0:7), "sigma"),
+                           print_groups = list(
+                             "Main effects" = c("beta0", "beta1", "beta2", "beta4", "sigma"),
+                             "Interactions" = c("beta3", "beta5", "beta6", "beta7")
+                           )) {
+  symbol <- str_replace(term, "beta", "\\\\beta_")
+
+  if (!print_version) {
+    cat(sprintf("\n\n## Varying $%s$ {.scrollable}\n\n%s\n\n::: {.panel-tabset}\n\n",
+                symbol, subtitle))
+    print_tabs(sim, term, panels = html_panels, ncol = 3)
+    cat("\n\n:::\n\n")
+  } else {
+    conds <- conditions_for(sim$conditions, term, sim$betas_fixed, sim$vary)
+    for (i in seq_len(nrow(conds))) {
+      for (g in names(print_groups)) {
+        panels <- print_groups[[g]]
+        cat(sprintf("\n\n## Varying $%s$: $%s = %g$\n\n%s **%s**\n\n",
+                    symbol, symbol, conds[[term]][i], subtitle, g))
+        print(plot_estimates(sim, conds$condition_id[i], terms = panels,
+                             ncol = ceiling(length(panels) / 2)))
+        cat("\n\n")
+      }
+    }
+  }
+}
 ```
 
 ## Simulation Design
@@ -1100,40 +1142,28 @@ $$
 
 :::
 
-## Varying $\beta_5$ {.scrollable}
-
-What happens with Measurement Reactivity?
-
-::: {.panel-tabset}
 
 ```{r}
 #| results: asis
 #| echo: false
 #| fig-width: 16
-#| fig-height: 9
+#| fig-height: !expr if (print_version) 7 else 13
 #| out-width: 100%
-print_tabs(sim, "beta5", panels = c(paste0("beta", 0:7), "sigma"), ncol = 3)
+results_slides(sim, "beta5",
+               subtitle = "What happens with measurement reactivity?",
+               print_version = print_version)
 ```
-
-:::
-
-## Varying $\beta_7$ {.scrollable}
-
-What happens with measurement reactivity **moderated by baseline**?
-
-
-::: {.panel-tabset}
 
 ```{r}
 #| results: asis
 #| echo: false
 #| fig-width: 16
-#| fig-height: 9
+#| fig-height: !expr if (print_version) 7 else 13
 #| out-width: 100%
-print_tabs(sim, "beta7", panels = c(paste0("beta", 0:7), "sigma"), ncol = 3)
+results_slides(sim, "beta7",
+               subtitle = "What happens with measurement reactivity **moderated by baseline**?",
+               print_version = print_version)
 ```
-
-:::
 
 ## Take Home
 
