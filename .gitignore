@@ -7,3 +7,4 @@
 /_targets/objects/
 
 **/*.quarto_ipynb
+outputs/*_checkpoints/

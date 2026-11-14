@@ -61,5 +61,180 @@
     "title": "Basic Measurement Reactivity Simulation",
     "section": "Varying \\(\\beta_6\\)",
     "text": "Varying \\(\\beta_6\\)\n\\(prettest \\times y_{1}\\)\n\n\\(\\beta_6 = -0.75\\)\\(\\beta_6 = 0\\)\\(\\beta_6 = 0.75\\)"
+  },
+  {
+    "objectID": "psychonomics/himmelstein_helmer_budescu_psychonomics.html#randomized-experiments",
+    "href": "psychonomics/himmelstein_helmer_budescu_psychonomics.html#randomized-experiments",
+    "title": "Combatting Measurement Reactivity in Experimental Design and Inference",
+    "section": "Randomized Experiments",
+    "text": "Randomized Experiments\n\nBehavioral research often deals with experiments where we want to test for positive benefits of some kind of experimental treatment\nExamples:\n\nDoes a new medication improve mood?\nDoes a new type of therapy improve well-being?\nDoes an anti-smoking campaign increase likelihood of quitting?\nDoes a new math curriculum improve learning? (running example)\n\n\nCore research design: Randomly assign participants to conditions:\n\nControl\nTreatment"
+  },
+  {
+    "objectID": "psychonomics/himmelstein_helmer_budescu_psychonomics.html#between-subjects-designs",
+    "href": "psychonomics/himmelstein_helmer_budescu_psychonomics.html#between-subjects-designs",
+    "title": "Combatting Measurement Reactivity in Experimental Design and Inference",
+    "section": "Between Subjects Designs",
+    "text": "Between Subjects Designs\n\nSimplest version of randomized design\nCore model\n\n\\[\n\\widehat{\\text{Math Score}}_i =\\;\n\\underbrace{\\beta_0}_{\\substack{\\text{Control} \\\\ \\text{Score}}}\n+ \\underbrace{\\beta_1 (\\text{Treatment}_i)}_{\\substack{\\text{Treatment} \\\\ \\text{Effect}}}\n\\]\nLimitations\n\nStatistical power\nDoes not allow for treatment effect to vary as a function of baseline ability (moderation)"
+  },
+  {
+    "objectID": "psychonomics/himmelstein_helmer_budescu_psychonomics.html#mixed-designs",
+    "href": "psychonomics/himmelstein_helmer_budescu_psychonomics.html#mixed-designs",
+    "title": "Combatting Measurement Reactivity in Experimental Design and Inference",
+    "section": "Mixed Designs",
+    "text": "Mixed Designs\n\n\nAdds pretest measurement\nControlling for baseline score improves power\nAllows for moderation\n\nDo people who start worse at math benefit more from the treatment?\n\n\n\\[\n\\widehat{\\text{Math Score}}_i =\\;\n\\underbrace{\\beta_0}_{\\substack{\\text{Control Score} \\\\ \\text{at Mean} \\\\ \\text{Baseline Score}}}\n+ \\underbrace{\\beta_1 (\\text{Treatment}_i)}_{\\substack{\\text{Treatment Effect} \\\\ \\text{at Mean} \\\\ \\text{Baseline Score}}} \\\\[2.5em]\n+ \\underbrace{\\beta_2 (\\text{Baseline}_i)}_{\\substack{\\text{Base Score Effect} \\\\ \\text{in Control}}}\n+ \\underbrace{\\beta_3 (\\text{Treatment}_i)(\\text{Baseline}_i)}_{\\substack{\\text{Difference in Treatment Effect} \\\\ \\text{per unit Change in Base Score} }}\n\\]"
+  },
+  {
+    "objectID": "psychonomics/himmelstein_helmer_budescu_psychonomics.html#hypothetical-visual",
+    "href": "psychonomics/himmelstein_helmer_budescu_psychonomics.html#hypothetical-visual",
+    "title": "Combatting Measurement Reactivity in Experimental Design and Inference",
+    "section": "Hypothetical Visual",
+    "text": "Hypothetical Visual"
+  },
+  {
+    "objectID": "psychonomics/himmelstein_helmer_budescu_psychonomics.html#problem-measurement-reactivity",
+    "href": "psychonomics/himmelstein_helmer_budescu_psychonomics.html#problem-measurement-reactivity",
+    "title": "Combatting Measurement Reactivity in Experimental Design and Inference",
+    "section": "Problem: Measurement Reactivity",
+    "text": "Problem: Measurement Reactivity\n\nWhat if the elicitation of the pretest itself acts as a confounding treatment?\n\nExample: Exposure to math test might call attention to important study points\nGoal of treatment is not to test how treatment helps pre-tested students, but how it helps students in general (typically who would not be pretested)\n\nMakes the true population model:\n\n\\[\n\\begin{aligned}\n\\text{Math Score}_i =\\;&\n\\underbrace{\\beta_0}_{\\substack{\\text{Control} \\\\ \\text{Score}}}\n+ \\underbrace{\\beta_1}_{\\substack{\\text{Treat.} \\\\ \\text{Effect}}} (\\text{Treatment}_i)\n+ \\underbrace{\\beta_2}_{\\substack{\\text{Base} \\\\ \\text{Score}}} (\\text{Baseline}_i)\n+ \\underbrace{\\beta_3}_{\\substack{\\text{Pretest} \\\\ \\text{Effect}}} (\\text{Pretest}_i)\\\\[1.5em]\n&+ \\underbrace{\\beta_4}_{\\substack{\\text{Treat.} \\times \\\\ \\text{Baseline}}} (\\text{Treatment}_i)(\\text{Baseline}_i) + \\underbrace{\\beta_4}_{\\substack{\\text{Treat.} \\times \\\\ \\text{Pretest}}} (\\text{Treatment}_i)(\\text{Pretest}_i) \\\\[1.5em]\n&+ \\underbrace{\\beta_6}_{\\substack{\\text{Pretest} \\times \\\\ \\text{Baseline}}} (\\text{Pretest}_i)(\\text{Baseline}_i)\n+ \\underbrace{\\beta_7}_{\\substack{\\text{Three-Way} \\\\ \\text{Interaction}}} (\\text{Treatment}_i)(\\text{Pretest}_i)(\\text{Baseline}_i)\n+ \\epsilon_i\n\\end{aligned}\n\\]"
+  },
+  {
+    "objectID": "psychonomics/himmelstein_helmer_budescu_psychonomics.html#measurement-reactivity",
+    "href": "psychonomics/himmelstein_helmer_budescu_psychonomics.html#measurement-reactivity",
+    "title": "Combatting Measurement Reactivity in Experimental Design and Inference",
+    "section": "Measurement Reactivity",
+    "text": "Measurement Reactivity\n\nWhat if the elicitation of the pretest itself acts as a confounding treatment?\n\nExample: Exposure to math test might call attention to important study points\nGoal of treatment is not to test how treatment helps pre-tested students, but how it helps students in general (typically who would not be pretested)\nDoes the act of being pretested affect\n\nTreatment of interest?\nRelationship between baseline and final score?"
+  },
+  {
+    "objectID": "psychonomics/himmelstein_helmer_budescu_psychonomics.html#population-model",
+    "href": "psychonomics/himmelstein_helmer_budescu_psychonomics.html#population-model",
+    "title": "Combatting Measurement Reactivity in Experimental Design and Inference",
+    "section": "Population Model",
+    "text": "Population Model\n\n\\[\n\\widehat{\\text{Math Score}}_i =\\;\n\\underbrace{\\beta_0}_{\\substack{\\text{Control Score} \\\\ \\text{No Pretest} \\\\ \\text{at Mean} \\\\ \\text{Baseline Score}}}\n+ \\underbrace{\\beta_1 (\\text{Treatment}_i)}_{\\substack{\\text{Treatment Effect} \\\\ \\text{No Pretest} \\\\ \\text{at Mean} \\\\ \\text{Baseline Score}}}\n+ \\underbrace{\\beta_2 (\\text{Baseline}_i)}_{\\substack{\\text{Baseline Score Effect} \\\\ \\text{in Control} \\\\ \\text{No Pretest}}}\n+ \\underbrace{\\beta_3 (\\text{Pretest}_i)}_{\\substack{\\text{Pretest Effect} \\\\ \\text{in Control} \\\\ \\text{at Mean} \\\\ \\text{Baseline Score}}} \\\\[2.5em]\n+ \\underbrace{\\beta_4 (\\text{Treatment}_i)(\\text{Baseline}_i)}_{\\substack{\\text{Difference in Treatment Effect} \\\\ \\text{per unit Change in Baseline Score} \\\\ \\text{No Pretest}}}\n+ \\underbrace{\\beta_5 (\\text{Treatment}_i)(\\text{Pretest}_i)}_{\\substack{\\text{Difference in Treatment Effect} \\\\ \\text{from Pretest} \\\\ \\text{at Mean Baseline Score} \\\\ \\text{\\textbf{(Measurement Reactivity)}}}} \\\\[2.5em]\n+ \\underbrace{\\beta_6 (\\text{Pretest}_i)(\\text{Baseline}_i)}_{\\substack{\\text{Difference in Baseline Score Effect} \\\\ \\text{per unit Change in Baseline Score} \\\\ \\text{from Pretest} \\\\ \\text{in Control}}}\n+ \\underbrace{\\beta_7 (\\text{Treatment}_i)(\\text{Pretest}_i)(\\text{Baseline}_i)}_{\\substack{\\text{Difference in Treatment Effect} \\\\ \\text{per unit Change in Baseline Score} \\\\ \\text{from Pretest}}}\n\\]"
+  },
+  {
+    "objectID": "psychonomics/himmelstein_helmer_budescu_psychonomics.html#visual",
+    "href": "psychonomics/himmelstein_helmer_budescu_psychonomics.html#visual",
+    "title": "Combatting Measurement Reactivity in Experimental Design and Inference",
+    "section": "Visual",
+    "text": "Visual"
+  },
+  {
+    "objectID": "psychonomics/himmelstein_helmer_budescu_psychonomics.html#the-problem",
+    "href": "psychonomics/himmelstein_helmer_budescu_psychonomics.html#the-problem",
+    "title": "Combatting Measurement Reactivity in Experimental Design and Inference",
+    "section": "The Problem",
+    "text": "The Problem\n\nWhen \\(\\text{Pretest}_i = 0\\), that means \\(\\text{Baseline}_i =\\) NA!\nMeasurement model cannot be estimated under normal conditions because anyone with an omitted pretest has missing data\n\nThe solution\n\nPlanned missing data design\n\nRandomize participants into crossed \\(2 \\text{ (Treatment) } \\times 2 \\text{ (Pretest})\\) design\nCollect auxiliary variables\nImpute missing \\(\\text{Baseline}_i\\) values"
+  },
+  {
+    "objectID": "psychonomics/himmelstein_helmer_budescu_psychonomics.html#missing-data-mechanisms",
+    "href": "psychonomics/himmelstein_helmer_budescu_psychonomics.html#missing-data-mechanisms",
+    "title": "Combatting Measurement Reactivity in Experimental Design and Inference",
+    "section": "Missing Data Mechanisms",
+    "text": "Missing Data Mechanisms\n\n\n\\(\\mathbf{Y}_{com}\\): the hypothetically complete data, split into \\(\\mathbf{Y}_{obs}\\) (observed) and \\(\\mathbf{Y}_{mis}\\) (unobserved)\n\\(\\mathbf{M}\\): missingness indicator (1 = missing, 0 = observed)\n\n\n\n\n\n\n\n\n\nMechanism\nDefinition\nImplication\n\n\n\n\nMCAR  Missing Completely at Random\n\\(P(M = 1 \\mid Y_{obs}, Y_{mis}) = P(M = 1)\\)\nListwise deletion is unbiased, but wastes information\n\n\nCMAR (MAR)  Conditionally Missing at Random\n\\(P(M = 1 \\mid Y_{obs}, Y_{mis}) = P(M = 1 \\mid Y_{obs})\\)\nMust borrow information from observed correlates\n\n\nMNAR  Missing Not at Random\n\\(P(M = 1 \\mid Y_{obs}, Y_{mis}) \\neq P(M = 1 \\mid Y_{obs})\\)\nBias can only be addressed with strong assumptions"
+  },
+  {
+    "objectID": "psychonomics/himmelstein_helmer_budescu_psychonomics.html#measurement-reactivity-as-a-missing-data-problem",
+    "href": "psychonomics/himmelstein_helmer_budescu_psychonomics.html#measurement-reactivity-as-a-missing-data-problem",
+    "title": "Combatting Measurement Reactivity in Experimental Design and Inference",
+    "section": "Measurement Reactivity as a Missing Data Problem",
+    "text": "Measurement Reactivity as a Missing Data Problem\n\n\n\nMapping to our example\n\n\\(Y_1 = \\text{Baseline}_i\\) (pretest score)\n\\(Y_2 = \\text{Math Score}_i\\) (posttest)\n\\(M_1 = 1 - \\text{Pretest}_i\\)\n\n\nMeasurement reactivity: the posttest depends on whether baseline was measured\n\\[\nP(Y_2 \\mid Y_1, M_1) \\neq P(Y_2 \\mid Y_1)\n\\]\nSo we must separately model \\(P(Y_2 \\mid Y_1, M_1 = 0)\\) and \\(P(Y_2 \\mid Y_1, M_1 = 1)\\)\n\nPlanned missingness: we randomize \\(M_1\\) (the Pretest condition) independently of \\(Y_1\\)\n\\[\nP(M_1 = 1 \\mid Y_1, Y_2) = P(M_1 = 1 \\mid \\cancel{Y_1}, Y_2)\n\\]\n\nMissingness may relate to \\(Y_2\\) (that is the reactivity), but never to the unobserved \\(Y_1\\)\nBaseline is CMAR by design"
+  },
+  {
+    "objectID": "psychonomics/himmelstein_helmer_budescu_psychonomics.html#what-can-we-estimate",
+    "href": "psychonomics/himmelstein_helmer_budescu_psychonomics.html#what-can-we-estimate",
+    "title": "Combatting Measurement Reactivity in Experimental Design and Inference",
+    "section": "What Can We Estimate?",
+    "text": "What Can We Estimate?\n\n\\(M_1\\) temporally precedes \\(Y_2\\), so the conditional of substantive interest runs the other way\n\n\nStandard approach: drop \\(Y_1\\)  (akin to listwise deletion)\n\\[\nP(Y_2 \\mid \\text{Pretest}, \\text{Treatment})\n\\]\n\n✓ Treatment effect without pretest (\\(\\beta_1\\))\n✓ Measurement reactivity (\\(\\beta_3\\), \\(\\beta_5\\))\n✗ Baseline effects and moderation (\\(\\beta_2\\), \\(\\beta_4\\), \\(\\beta_6\\), \\(\\beta_7\\))\n✗ Power lost by ignoring baseline\n\n\nOur goal: bring \\(Y_1\\) back\n\\[\nP(Y_2 \\mid Y_1, \\text{Pretest}, \\text{Treatment})\n\\]\n\n✓ The full population model (\\(\\beta_0\\) – \\(\\beta_7\\))\n✓ Greater power for treatment and reactivity effects\n✓ Moderation by baseline, with and without a pretest"
+  },
+  {
+    "objectID": "psychonomics/himmelstein_helmer_budescu_psychonomics.html#auxiliary-variables-getting-baseline-back",
+    "href": "psychonomics/himmelstein_helmer_budescu_psychonomics.html#auxiliary-variables-getting-baseline-back",
+    "title": "Combatting Measurement Reactivity in Experimental Design and Inference",
+    "section": "Auxiliary Variables: Getting Baseline Back",
+    "text": "Auxiliary Variables: Getting Baseline Back\n\n\nAuxiliary variables (\\(A\\)): outside the focal model, but informative about missing values (Collins et al., 2001)\n\nType A: related to \\(M\\) and \\(Y\\) (critical in standard missing data problems)\nType B: related to \\(Y\\) only (improve precision and power)\nType C: related to \\(M\\) only (superfluous)\n\nWith planned missingness, \\(M\\) is set by randomization, so there are no Type A variables and Type B variables do the heavy lifting:\n\n\\[\nP(Y_1 \\mid \\text{Pretest}, A) = P(Y_1 \\mid A)\n\\]\nThe recipe\n\nLearn \\(P(Y_1 \\mid A)\\) from the pretested group\nImpute the distribution of \\(Y_1\\) for the non-pretested group (maximum likelihood, multiple imputation, or fully Bayesian)\nEstimate \\(P(Y_2 \\mid Y_1, \\text{Pretest}, \\text{Treatment})\\)\n\nRequirement: \\(A\\) must correlate strongly enough with \\(Y_1\\) to make the imputation informative (e.g., prior-year math grades, without exposing students to the test material)"
+  },
+  {
+    "objectID": "psychonomics/himmelstein_helmer_budescu_psychonomics.html#r-fit-text-missing-data-mechanisms",
+    "href": "psychonomics/himmelstein_helmer_budescu_psychonomics.html#r-fit-text-missing-data-mechanisms",
+    "title": "Combatting Measurement Reactivity in Experimental Design and Inference",
+    "section": "{.r-fit-text} Missing Data Mechanisms",
+    "text": "{.r-fit-text} Missing Data Mechanisms\n\n\n\\(\\mathbf{Y}_{com}\\): the hypothetically complete data, split into \\(\\mathbf{Y}_{obs}\\) (observed) and \\(\\mathbf{Y}_{mis}\\) (unobserved)\n\\(\\mathbf{M}\\): missingness indicator (1 = missing, 0 = observed)\n\n\n\n\n\n\n\n\n\nMechanism\nDefinition\nImplication\n\n\n\n\nMCAR  Missing Completely at Random\n\\(P(M = 1 \\mid Y_{obs}, Y_{mis}) = P(M = 1)\\)\nListwise deletion is unbiased, but wastes information\n\n\nCMAR  Conditionally Missing at Random\n\\(P(M = 1 \\mid Y_{obs}, Y_{mis}) = P(M = 1 \\mid Y_{obs})\\)\nMust borrow information from observed correlates\n\n\nMNAR  Missing Not at Random\n\\(P(M = 1 \\mid Y_{obs}, Y_{mis}) \\neq P(M = 1 \\mid Y_{obs})\\)\nBias can only be addressed with strong assumptions"
+  },
+  {
+    "objectID": "psychonomics/himmelstein_helmer_budescu_psychonomics.html#reactivity-as-missing-data",
+    "href": "psychonomics/himmelstein_helmer_budescu_psychonomics.html#reactivity-as-missing-data",
+    "title": "Combatting Measurement Reactivity in Experimental Design and Inference",
+    "section": "Reactivity as Missing Data",
+    "text": "Reactivity as Missing Data\n\n\n\nMapping to our example\n\n\\(Y_1 = \\text{Baseline}_i\\) (pretest score)\n\\(Y_2 = \\text{Math Score}_i\\) (posttest)\n\\(M_1 = 1 - \\text{Pretest}_i\\)\n\n\nMeasurement reactivity: the posttest depends on whether baseline was measured\n\\[\nP(Y_2 \\mid Y_1, M_1 = 1) \\neq P(Y_2 \\mid Y_1, M_1 = 0)\n\\]\nSo we must separately model:\n\n\\(P(Y_2 \\mid Y_1, M_1 = 0)\\)\n\\(P(Y_2 \\mid Y_1, M_1 = 1)\\)\n\n\nPlanned missingness: Randomize \\(M_1\\) (the Pretest condition) independently of \\(Y_1\\)\n\\[\nP(M_1 = 1 \\mid Y_1, A) = P(M_1 = 1)\n\\]\n\n\\(M_1\\) is related to \\(Y_2\\), but as a cause of \\(Y_2\\), not a selection mechanism\nWe model it directly with the pretest terms in the measurement model\nMissingness is fully determined by pretest condition. Baseline is CMAR by design"
+  },
+  {
+    "objectID": "psychonomics/himmelstein_helmer_budescu_psychonomics.html#auxiliary-variables",
+    "href": "psychonomics/himmelstein_helmer_budescu_psychonomics.html#auxiliary-variables",
+    "title": "Combatting Measurement Reactivity in Experimental Design and Inference",
+    "section": "Auxiliary Variables",
+    "text": "Auxiliary Variables\n\n\nAuxiliary variables (\\(A\\)): Outside measurement model, but informative about missing \\(Y_1\\)\nThe joint model factors into two pieces, estimated together:\n\n\\[\nP(Y_2, Y_1 \\mid A, \\text{Pretest}, \\text{Treatment}) =\n\\underbrace{P(Y_2 \\mid Y_1, \\text{Pretest}, \\text{Treatment})}_{\\text{Measurement model}}\n\\times\n\\underbrace{P(Y_1 \\mid A)}_{\\text{Imputation model}}\n\\]\n\nMissing \\(Y_1\\) are drawn from plausible values given both \\(A\\) and \\(Y_2\\):\n\n\\[\nP(Y_{1,\\text{mis}} \\mid Y_2, A, \\text{Pretest}, \\text{Treatment}) \\;\\propto\\;\nP(Y_2 \\mid Y_1, \\text{Pretest}, \\text{Treatment}) \\times P(Y_1 \\mid A)\n\\]\n\nRandomization \\(\\Rightarrow\\) \\(P(Y_1 \\mid A)\\) is the same in both Pretest groups, so the pretested group shows how \\(A\\) predicts \\(Y_1\\)\nRequirements: \\(A\\) is unaffected by the pretest (e.g., measured before randomization), relates to \\(Y_2\\) only through \\(Y_1\\), and correlates strongly enough with \\(Y_1\\) to be informative"
+  },
+  {
+    "objectID": "psychonomics/himmelstein_helmer_budescu_psychonomics.html#what-can-we-do",
+    "href": "psychonomics/himmelstein_helmer_budescu_psychonomics.html#what-can-we-do",
+    "title": "Combatting Measurement Reactivity in Experimental Design and Inference",
+    "section": "What Can We Do?",
+    "text": "What Can We Do?\n\n\n\nMeasure \\(Y_1\\) when \\(\\text{Pretest}_i = 1\\)\n\\[\nP(Y_2 \\mid \\text{Pretest}, \\text{Treatment})\n\\]\nBenefits:\n\nTreatment effect without pretest (\\(\\beta_1\\))\nCan test for measurement reactivity (\\(\\beta_3\\), \\(\\beta_5\\))\n\nLimitations:\n\nStatistically just a between subjects design\n\nNo more moderation\nWeaker statistical power\n\n\n\nOur goal: bring \\(Y_1\\) back\n\\[\nP(Y_2 \\mid Y_1, \\text{Pretest}, \\text{Treatment})\n\\]\nBenefits:\n\nEstimate full measurement model (\\(\\beta_0\\) – \\(\\beta_7\\))\nGreater power for treatment and reactivity effects\nReintroduces moderation effects with baseline\n\nLimitations\n\nHow do we estimate \\(Y_1\\)?"
+  },
+  {
+    "objectID": "psychonomics/himmelstein_helmer_budescu_psychonomics.html#full-measurement-model",
+    "href": "psychonomics/himmelstein_helmer_budescu_psychonomics.html#full-measurement-model",
+    "title": "Combatting Measurement Reactivity in Experimental Design and Inference",
+    "section": "Full Measurement Model",
+    "text": "Full Measurement Model\n\n\\[\n\\widehat{\\text{Math Score}}_i =\\;\n\\underbrace{\\beta_0}_{\\substack{\\text{Control Score} \\\\ \\text{No Pretest} \\\\ \\text{at Mean} \\\\ \\text{Baseline Score}}}\n+ \\underbrace{\\beta_1 (\\text{Treatment}_i)}_{\\substack{\\text{Treatment Effect} \\\\ \\text{No Pretest} \\\\ \\text{at Mean} \\\\ \\text{Baseline Score}}}\n+ \\underbrace{\\beta_2 (\\text{Baseline}_i)}_{\\substack{\\text{Baseline Score Effect} \\\\ \\text{in Control} \\\\ \\text{No Pretest}}}\n+ \\\\[2.5em]\n\\underbrace{\\beta_3 (\\text{Treatment}_i)(\\text{Baseline}_i)}_{\\substack{\\text{Difference in Treatment Effect} \\\\ \\text{per unit Change in Baseline Score} \\\\ \\text{No Pretest}}} +\n\\underbrace{\\beta_4 (\\text{Pretest}_i)}_{\\substack{\\text{Pretest Effect} \\\\ \\text{in Control} \\\\ \\text{at Mean} \\\\ \\text{Baseline Score}}}\n+ \\underbrace{\\beta_5 (\\text{Treatment}_i)(\\text{Pretest}_i)}_{\\substack{\\text{Difference in Treatment Effect} \\\\ \\text{from Pretest} \\\\ \\text{at Mean Baseline Score} \\\\ \\text{\\textbf{(Measurement Reactivity)}}}} \\\\[2.5em]\n+ \\underbrace{\\beta_6 (\\text{Pretest}_i)(\\text{Baseline}_i)}_{\\substack{\\text{Difference in Baseline Score Effect} \\\\ \\text{per unit Change in Baseline Score} \\\\ \\text{from Pretest} \\\\ \\text{in Control}}}\n+ \\underbrace{\\beta_7 (\\text{Treatment}_i)(\\text{Pretest}_i)(\\text{Baseline}_i)}_{\\substack{\\text{Difference in Treatment Effect} \\\\ \\text{per unit Change in Baseline Score} \\\\ \\text{from Pretest}}}\n\\]"
+  },
+  {
+    "objectID": "psychonomics/himmelstein_helmer_budescu_psychonomics.html#three-ways-to-recover-baseline",
+    "href": "psychonomics/himmelstein_helmer_budescu_psychonomics.html#three-ways-to-recover-baseline",
+    "title": "Combatting Measurement Reactivity in Experimental Design and Inference",
+    "section": "Three Ways to Recover Baseline",
+    "text": "Three Ways to Recover Baseline\n\n\n\nMaximum Likelihood\nmdmb::frm_em()\nHow it works:\n\nMeasurement model + model for Baseline written as one factored likelihood\nMissing Baselines are integrated over, never filled in\nEstimated with maximum likelihood (EM algorithm)\n\nInference:\n\nStandard errors, \\(p\\)-values, confidence intervals (NHST)\n\nUse when:\n\nOne model of interest and frequentist reporting\nInteractions with an incomplete predictor (standard FIML in SEM software struggles here)\n\n\nMultiple Imputation\nBlimp via rblimp, pooled with mitml\nHow it works:\n\nBayesian MCMC (factored regression) draws \\(m\\) plausible Baselines for each non-pretested participant\nMeasurement model fit to each completed dataset with OLS\nResults pooled with Rubin’s rules\n\nInference:\n\nPooled estimates, standard errors, \\(p\\)-values (NHST)\n\nUse when:\n\nYou want complete datasets to reuse across analyses or software\nImputation model must include the outcome and interactions\n\n\nFully Bayesian\nbrms with mi(), Stan via cmdstanr\nHow it works:\n\nMeasurement model and model for Baseline estimated jointly in one model\nMissing Baselines are parameters with their own posterior\nOne joint likelihood + priors → posterior for everything\n\nInference:\n\nPosterior distributions, credible intervals, posterior probabilities\n\nUse when:\n\nYou prefer Bayesian inference or want informative priors\nUncertainty about missing values carried through in one step\n\n\nAll three use the same information (A, Math Score, and the measurement model), so all three should recover \\(\\beta_0\\)–\\(\\beta_7\\)"
+  },
+  {
+    "objectID": "psychonomics/himmelstein_helmer_budescu_psychonomics.html#simulation-design",
+    "href": "psychonomics/himmelstein_helmer_budescu_psychonomics.html#simulation-design",
+    "title": "Combatting Measurement Reactivity in Experimental Design and Inference",
+    "section": "Simulation Design",
+    "text": "Simulation Design\n\n\\[\n\\widehat{\\text{Math Score}}_i = \\beta_0 + \\beta_1 (\\text{Treatment}_i) + \\beta_2 (\\text{Baseline}_i) + \\beta_3 (\\text{Treatment}_i)(\\text{Baseline}_i) + \\beta_4 (\\text{Pretest}_i) \\\\[1em]\n+ \\underbrace{\\beta_5 (\\text{Treatment}_i)(\\text{Pretest}_i)}_{\\text{Manipulated}} + \\beta_6 (\\text{Pretest}_i)(\\text{Baseline}_i) + \\underbrace{\\beta_7 (\\text{Treatment}_i)(\\text{Pretest}_i)(\\text{Baseline}_i)}_{\\text{Manipulated}}\n\\]\n\\[\nA_{ik} \\sim N(0, 1), \\qquad\n\\text{Baseline}_i = \\frac{\\sum_{k=1}^{K} A_{ik} + \\varepsilon_i}{\\sqrt{K + \\sigma_{B}^2}}, \\qquad\n\\varepsilon_i \\sim N(0, \\sigma_{B}^2)\n\\]\n\n\\(N =\\) 600, \\(K =\\) 3 auxiliary variables, \\(R^2_{A} =\\) 0.33\n\\(P(\\text{Pretest}_i = 1) =\\) 0.33, \\(P(\\text{Treatment}_i = 1) =\\) 0.5\n\\(\\beta_0 =\\) 0, \\(\\beta_1 =\\) 0.3, \\(\\beta_2 =\\) 1, \\(\\beta_3 =\\) -0.1, \\(\\beta_4 =\\) 0.2, \\(\\beta_6 =\\) 0\nVaried one at a time: \\(\\beta_5 \\in \\{\\)-0.225, 0, 0.225\\(\\}\\) with \\(\\beta_7 = 0\\), and \\(\\beta_7 \\in \\{\\)-0.225, 0, 0.225\\(\\}\\) with \\(\\beta_5 = 0\\)\n5 conditions, 200 replications each"
+  },
+  {
+    "objectID": "psychonomics/himmelstein_helmer_budescu_psychonomics.html#methods-compared",
+    "href": "psychonomics/himmelstein_helmer_budescu_psychonomics.html#methods-compared",
+    "title": "Combatting Measurement Reactivity in Experimental Design and Inference",
+    "section": "Methods Compared",
+    "text": "Methods Compared\n\nBenchmarks (not possible in practice or a different design)\n\nTrue: Actual measurement model parameters (not directly observable)\nBetween: Between subjects design (no pretest)\nMixed: Mixed (pretest-posttest) design\n\nPlanned missingness: Baseline observed only when \\(\\text{Pretest}_i = 1\\); three ways to recover it using \\(A\\)\n\nML: full-information maximum likelihood (mdmb::frm_em)\nMI: model-based multiple imputation with factored regression (Blimp via rblimp, \\(m =\\) 100), pooled with Rubin’s rules (mitml)\nBayes: fully Bayesian joint model with Baseline as missing data (brms)"
+  },
+  {
+    "objectID": "psychonomics/himmelstein_helmer_budescu_psychonomics.html#varying-beta_5",
+    "href": "psychonomics/himmelstein_helmer_budescu_psychonomics.html#varying-beta_5",
+    "title": "Combatting Measurement Reactivity in Experimental Design and Inference",
+    "section": "Varying \\(\\beta_5\\)",
+    "text": "Varying \\(\\beta_5\\)\nWhat happens with Measurement Reactivity?\n\n\\(\\beta_5 = -0.225\\)\\(\\beta_5 = 0\\)\\(\\beta_5 = 0.225\\)"
+  },
+  {
+    "objectID": "psychonomics/himmelstein_helmer_budescu_psychonomics.html#varying-beta_7",
+    "href": "psychonomics/himmelstein_helmer_budescu_psychonomics.html#varying-beta_7",
+    "title": "Combatting Measurement Reactivity in Experimental Design and Inference",
+    "section": "Varying \\(\\beta_7\\)",
+    "text": "Varying \\(\\beta_7\\)\nWhat happens with measurement reactivity moderated by baseline?\n\n\\(\\beta_7 = -0.225\\)\\(\\beta_7 = 0\\)\\(\\beta_7 = 0.225\\)"
+  },
+  {
+    "objectID": "psychonomics/himmelstein_helmer_budescu_psychonomics.html#take-home",
+    "href": "psychonomics/himmelstein_helmer_budescu_psychonomics.html#take-home",
+    "title": "Combatting Measurement Reactivity in Experimental Design and Inference",
+    "section": "Take Home",
+    "text": "Take Home\n\n\nBetween subjects designs\n\nSacrifice power (larger: \\(\\sigma\\), variance in \\(\\beta_1\\) estimates)\nDo not permit varying levels of treatment effect by baseline trait/ability levels\n\nMixed designs\n\nRisk triggering measurement reactivity, biasing treatment effects\n\nPlanned missing designs\n\nTest whether measurement reactivity is present\nRecover ecologically valid treatment effects in the absence of pretest measurement if it is\nPermit varying levels of treatment effect by baseline/trait ability\nMore research is needed to:\n\nTest optimal designs for statistical power\nValidate on real world data"
+  },
+  {
+    "objectID": "psychonomics/himmelstein_helmer_budescu_psychonomics.html#missing-data-methods",
+    "href": "psychonomics/himmelstein_helmer_budescu_psychonomics.html#missing-data-methods",
+    "title": "Combatting Measurement Reactivity in Experimental Design and Inference",
+    "section": "Missing Data Methods",
+    "text": "Missing Data Methods\n\n\n\nMaximum Likelihood\nmdmb::frm_em()\nHow it works:\n\nMeasurement model + model for Baseline written as one factored likelihood\nEstimated with maximum likelihood (EM algorithm)\n\nInference:\n\nNHST\n\n\nMultiple Imputation\nBlimp via rblimp, pooled with mitml\nHow it works:\n\nBayesian MCMC draws \\(m\\) plausible Baselines for each non-pretested participant\nMeasurement model fit to each completed dataset with OLS\nResults pooled with Rubin’s rules\n\nInference:\n\nNHST\n\n\nFully Bayesian\nbrms with mi(), Stan via cmdstanr\nHow it works:\n\nMeasurement model and model for Baseline estimated jointly in one model\nMissing Baselines are treated as parameters with their own posterior\nOne joint likelihood + priors = posterior for everything\n\nInference:\n\nBayes\n\n\nAll three use the same information (A, Math Score, and the measurement model), so all three should recover \\(\\beta_0\\)–\\(\\beta_7\\)"
   }
 ]
