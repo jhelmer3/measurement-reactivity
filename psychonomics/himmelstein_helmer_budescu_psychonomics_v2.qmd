@@ -1,6 +1,6 @@
 ---
 title: "Combatting Measurement Reactivity in Experimental Design and Inference"
-subtitle: "Annual Meeting of the Psychonomic Society, San Diego, CA"
+subtitle: "Annual Meeting of the Psychonomic Society<br>San Diego, CA"
 date: "November 22, 2026"
 date-format: "MMMM D, YYYY"
 author:
