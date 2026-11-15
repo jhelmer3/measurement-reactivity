@@ -1386,7 +1386,45 @@ plot_rq(sim, "beta3")
 - Consider assumptions and violations
   - What if $A$ impacts $Y_1$ or $Y_2$?
   
-  
+---
+
+:::::: {.columns style="display: flex; align-items: center; height: 600px;"}
+
+::::: {.column width="45%" style="text-align: center;"}
+
+<h2 style="font-size: 2.6em; margin-bottom: 0.3em;">Thank you!</h2>
+
+[mhimmelstein3@gatech.edu](mailto:mhimmelstein3@gatech.edu)
+
+![](qr_himmelstein_budescu_helmer.png){.nostretch width="300px" style="margin-top: 0.5em;"}
+
+**Slides**
+
+:::::
+
+::::: {.column width="55%"}
+
+:::: {style="display: flex; justify-content: center; gap: 60px; text-align: center;"}
+
+::: {}
+![](jess.png){.nostretch style="width: 240px; height: 240px; object-fit: cover; border-radius: 50%;"}
+
+**Jessica Helmer**  
+[Georgia Tech]{style="font-size: 0.8em;"}
+:::
+
+::: {}
+![](david.jpg){.nostretch style="width: 240px; height: 240px; object-fit: cover; object-position: center 20%; border-radius: 50%;"}
+
+**David V. Budescu**  
+[Fordham University]{style="font-size: 0.8em;"}
+:::
+
+::::
+
+:::::
+
+::::::
   
 ## Appendix: Missing Data Methods
 
