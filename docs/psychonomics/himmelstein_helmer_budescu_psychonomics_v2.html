@@ -248,7 +248,7 @@ David V. Budescu
 <li>Does the act of being pretested affect
 <ul>
 <li>Treatment of interest?</li>
-<li>Relationship between baseline and final score?</li>
+<li>How baseline moderates treatment effects?</li>
 </ul></li>
 </ul></li>
 </ul>
@@ -262,7 +262,7 @@ David V. Budescu
 \underbrace{\beta_4 (\text{Pretest}_i)}_{\substack{\text{Pretest Effect} \\ \text{in Control} \\ \text{at Mean} \\ \text{Baseline Score}}}
 + \underbrace{\beta_5 (\text{Treatment}_i)(\text{Pretest}_i)}_{\substack{\text{Difference in Treatment Effect} \\ \text{from Pretest} \\ \text{at Mean Baseline Score} \\ \text{\textbf{(Measurement Reactivity)}}}}
 + \underbrace{\beta_6 (\text{Pretest}_i)(\text{Baseline}_i)}_{\substack{\text{Difference in Baseline Score Effect} \\ \text{per unit Change in Baseline Score} \\ \text{from Pretest} \\ \text{in Control}}}
-+ \underbrace{\beta_7 (\text{Treatment}_i)(\text{Pretest}_i)(\text{Baseline}_i)}_{\substack{\text{Difference in Treatment Effect} \\ \text{per unit Change in Baseline Score} \\ \text{from Pretest}}}
++ \underbrace{\beta_7 (\text{Treatment}_i)(\text{Pretest}_i)(\text{Baseline}_i)}_{\substack{\text{Difference in Treatment Effect} \\ \text{per unit Change in Baseline Score} \\ \text{from Pretest} \\ \text{\textbf{(Measurement Reactivity on Moderation)}}}}
 \]</span></p>
 </div>
 </div>
@@ -287,13 +287,14 @@ David V. Budescu
 + \underbrace{\beta_5 (\text{Treatment}_i)(\text{Pretest}_i)}_{\substack{\text{Difference in Treatment Effect} \\ \text{from Pretest} \\ \text{\textbf{(Measurement Reactivity)}}}}
 \]</span></p>
 <ul>
-<li>Identifies but does not correct for measurement reactivity when present</li>
+<li>Less powerful than between subjects design</li>
+<li>Impossible to capture moderation effects</li>
 </ul>
 <p><strong>New Contribution:</strong> Planned missing data design</p>
 <ul>
 <li>Collect auxiliary variables</li>
 <li>Impute missing <span class="math inline">\(\text{Baseline}_i\)</span> values</li>
-<li>Identifies <strong>and</strong> corrects for measurement reactivity</li>
+<li>Recover power and moderation?</li>
 </ul>
 </div>
 </section>
@@ -313,66 +314,25 @@ David V. Budescu
 </div><div class="column" style="width:50%;">
 <p><strong>Measurement reactivity:</strong> the posttest depends on <em>whether</em> baseline was measured</p>
 <p><span class="math display">\[
-P(Y_2 \mid Y_1, M_1 = 1) \neq P(Y_2 \mid Y_1, M_1 = 0)
+P(Y_2 \mid Y_{1, mis}, M_1 = 1) \neq P(Y_2 \mid Y_{1, obs}, M_1 = 0)
+\]</span></p>
+<p>Which implies:</p>
+<p><span class="math display">\[
+P(M_1 = 1 \mid Y_2, Y_{1, obs}, Y_{1, mis}) \neq P(M_1 = 1 \mid Y_2, Y_{1, obs})
 \]</span></p>
 <p>So we must separately model:</p>
 <ul>
-<li><span class="math inline">\(P(Y_2 \mid Y_1, M_1 = 0)\)</span></li>
-<li><span class="math inline">\(P(Y_2 \mid Y_1, M_1 = 1)\)</span> (How???)</li>
+<li><span class="math inline">\(P(Y_2 \mid Y_{1,obs}, M_1 = 0)\)</span></li>
+<li><span class="math inline">\(P(Y_2 \mid Y_{1,mis}, M_1 = 1)\)</span> (How???)</li>
 </ul>
 </div></div>
-<p><strong>Planned missingness:</strong> randomize <span class="math inline">\(M_1\)</span> (the Pretest condition) independently of <span class="math inline">\(Y_1\)</span></p>
-<ul>
-<li>Conditioning on the observed Pretest condition makes <span class="math inline">\(Y_1\)</span> ignorable:</li>
-</ul>
+<p><strong>Planned missingness:</strong> <strong>make mechanism (C)MAR</strong> by randomizing <span class="math inline">\(M_1\)</span> independently of everything measured <em>before</em> treatment.</p>
 <p><span class="math display">\[
-P(M_1 = 1 \mid Y_1, Y_2, \text{Pretest}) = P(M_1 = 1 \mid \text{Pretest})
+P(M_1 = 1 \mid Y_2, Y_{1, obs}, Y_{1, mis}, \text{Pretest}) = P(M_1 = 1  \mid Y_{1, obs}, Y_2, \text{Pretest})
 \]</span></p>
 <ul>
-<li>Baseline (<span class="math inline">\(Y_1\)</span>) is <strong>(C)MAR by design</strong></li>
+<li><strong>Then:</strong> find a way to impute missing <span class="math inline">\(Y_1\)</span> from pre-treatment information, and model <span class="math inline">\(P(Y_2 \mid Y_1, M_1)\)</span></li>
 </ul>
-</div>
-</section>
-<section id="what-can-we-do" class="slide level2">
-<h2>What Can We Do?</h2>
-<div style="font-size: 0.8em;">
-<div class="columns">
-<div class="column" style="width:48%;">
-<p><strong>Measure <span class="math inline">\(Y_1\)</span> only when <span class="math inline">\(\text{Pretest}_i = 1\)</span></strong></p>
-<p>(Solomon Four Group Design)</p>
-<p><span class="math display">\[
-P(Y_2 \mid \text{Pretest}, \text{Treatment})
-\]</span></p>
-<p><strong>Benefits:</strong></p>
-<ul>
-<li>Treatment effect without pretest (<span class="math inline">\(\beta_1\)</span>)</li>
-<li>Can test for measurement reactivity (<span class="math inline">\(\beta_5\)</span>)</li>
-</ul>
-<p><strong>Limitations:</strong></p>
-<ul>
-<li>Essentially between subjects analysis
-<ul>
-<li>Only based on <span class="math inline">\(\text{Pretest}_i = 0\)</span> subsample</li>
-<li>No more moderation</li>
-<li>Lose statistical power vs.&nbsp;between subjects design</li>
-</ul></li>
-</ul>
-</div><div class="column" style="width:50%;">
-<p><strong>Our goal: bring <span class="math inline">\(Y_1\)</span> back</strong></p>
-<p><span class="math display">\[
-P(Y_2 \mid Y_1, \text{Pretest}, \text{Treatment})
-\]</span></p>
-<p><strong>Benefits:</strong></p>
-<ul>
-<li>Estimate full measurement model (<span class="math inline">\(\beta_0\)</span> – <span class="math inline">\(\beta_7\)</span>)</li>
-<li>Greater power for treatment and reactivity effects</li>
-<li>Reintroduces moderation effects with baseline</li>
-</ul>
-<p><strong>Limitations</strong></p>
-<ul>
-<li>How do we estimate <span class="math inline">\(Y_1\)</span>?</li>
-</ul>
-</div></div>
 </div>
 </section>
 <section id="auxiliary-variables" class="slide level2">
@@ -391,7 +351,7 @@ P(Y_2, Y_1 \mid A, \text{Pretest}, \text{Treatment})
 \]</span></p>
 <ul>
 <li><span class="math inline">\(P(Y_1 \mid A)\)</span> is the same in both Pretest groups, so the pretested group shows how <span class="math inline">\(A\)</span> predicts <span class="math inline">\(Y_1\)</span></li>
-<li>Missing <span class="math inline">\(Y_1\)</span> are drawn from plausible values given <strong>both</strong> <span class="math inline">\(A\)</span> and <span class="math inline">\(Y_2\)</span>:</li>
+<li>Missing (unpretested group) <span class="math inline">\(Y_1\)</span> are drawn from plausible values given <strong>both</strong> <span class="math inline">\(A\)</span> and <span class="math inline">\(Y_2\)</span>:</li>
 </ul>
 <p><span class="math display">\[
 P(Y_{1,\text{mis}} \mid Y_2, A, \text{Pretest}, \text{Treatment}) \;\propto\;
@@ -418,7 +378,10 @@ A_{ik} \sim N(0, 1), \qquad
 <ul>
 <li><span class="math inline">\(N =\)</span> 450, <span class="math inline">\(K =\)</span> 3 auxiliary variables, <span class="math inline">\(R^2_{A} =\)</span> 0.33</li>
 <li><span class="math inline">\(P(\text{Pretest}_i = 1) =\)</span> 0.33, <span class="math inline">\(P(\text{Treatment}_i = 1) =\)</span> 0.5</li>
-<li><span class="math inline">\(\beta_0 = 0,\ \beta_1 = 0.5,\ \beta_2 = 1,\ \beta_3 = -0.25,\ \beta_4 = 0.2,\ \beta_6 = 0\)</span></li>
+<li><span class="math inline">\(\beta_0 = 0,\ \beta_1 = 0.5,\ \beta_2 = 1,\ \beta_3 = -0.25,\ \beta_4 = 0.2,\ \beta_6 = 0\)</span>
+<ul>
+<li><strong><span class="math inline">\(\beta_1\)</span> implies medium treatment effect, <span class="math inline">\(\beta_3\)</span> implies baseline offsets treatment</strong></li>
+</ul></li>
 <li><strong>Crossed:</strong> <span class="math inline">\(\beta_5 \in \{0, -0.5\} \times \beta_7 \in \{0, 0.25\}\)</span></li>
 <li>4 conditions, 200 replications each</li>
 </ul>
@@ -442,39 +405,97 @@ A_{ik} \sim N(0, 1), \qquad
 </ul>
 </div>
 </section>
-<section id="detecting-reactivity" class="slide level2">
-<h2>Detecting Reactivity</h2>
-<p><span class="math inline">\(\beta_5\)</span>: Treatment <span class="math inline">\(\times\)</span> Pretest, pretest moderating treatment effect</p>
-
-<img data-src="himmelstein_helmer_budescu_psychonomics_v2_files/figure-revealjs/unnamed-chunk-3-1.png" style="width:100.0%" class="r-stretch"></section>
-<section id="moderated-reactivity" class="slide level2">
-<h2>Moderated Reactivity</h2>
-<p><span class="math inline">\(\beta_7\)</span>: Treatment <span class="math inline">\(\times\)</span> Pretest <span class="math inline">\(\times\)</span> Baseline, pretest moderating moderation effect</p>
-
-<img data-src="himmelstein_helmer_budescu_psychonomics_v2_files/figure-revealjs/unnamed-chunk-4-1.png" style="width:100.0%" class="r-stretch"></section>
 <section id="recovery-of-treatment" class="slide level2">
 <h2>Recovery of Treatment</h2>
+<div style="font-size: 0.8em;">
 <p><span class="math inline">\(\beta_1\)</span>: Treatment effect without a pretest, the effect we want to generalize</p>
-
-<img data-src="himmelstein_helmer_budescu_psychonomics_v2_files/figure-revealjs/unnamed-chunk-5-1.png" style="width:100.0%" class="r-stretch"></section>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="himmelstein_helmer_budescu_psychonomics_v2_files/figure-revealjs/unnamed-chunk-3-1.png" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<ul>
+<li>All methods except mixed, which is biased under measurement reactivity, recover treatment</li>
+</ul>
+</div>
+</section>
+<section id="detecting-reactivity" class="slide level2">
+<h2>Detecting Reactivity</h2>
+<div style="font-size: 0.8em;">
+<p><span class="math inline">\(\beta_5\)</span>: Treatment <span class="math inline">\(\times\)</span> Pretest, pretest moderating treatment effect</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="himmelstein_helmer_budescu_psychonomics_v2_files/figure-revealjs/unnamed-chunk-4-1.png" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<ul>
+<li>Between and mixed designs <strong>cannot</strong> detect reactivity, planned missing designs with auxiliary variables do so more powerfully than Solomon</li>
+</ul>
+</div>
+</section>
 <section id="recovery-of-moderation" class="slide level2">
 <h2>Recovery of Moderation</h2>
+<div style="font-size: 0.8em;">
 <p><span class="math inline">\(\beta_3\)</span>: Treatment moderated by baseline score without a pretest</p>
-
-<img data-src="himmelstein_helmer_budescu_psychonomics_v2_files/figure-revealjs/unnamed-chunk-6-1.png" style="width:100.0%" class="r-stretch"></section>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="himmelstein_helmer_budescu_psychonomics_v2_files/figure-revealjs/unnamed-chunk-5-1.png" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<ul>
+<li>Between and Solomon can’t detect moderation, mixed is biased under measurement reactivity</li>
+</ul>
+</div>
+</section>
+<section id="moderated-reactivity" class="slide level2">
+<h2>Moderated Reactivity</h2>
+<div style="font-size: 0.8em;">
+<p><span class="math inline">\(\beta_7\)</span>: Treatment <span class="math inline">\(\times\)</span> Pretest <span class="math inline">\(\times\)</span> Baseline, pretest moderating moderation effect</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="himmelstein_helmer_budescu_psychonomics_v2_files/figure-revealjs/unnamed-chunk-6-1.png" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<ul>
+<li><strong>Only</strong> planned missing designs with auxiliary variables can detect measurement reactivity on moderation (unbiased, but poor power)</li>
+</ul>
+</div>
+</section>
 <section id="take-home" class="slide level2">
 <h2>Take Home</h2>
+<div style="font-size: 0.95em;">
 <ul>
-<li><strong>Between subjects</strong> designs are well powered for <strong>treatment effect</strong> but cannot detect reactivity or moderation effects</li>
+<li><strong>Between subjects</strong> designs are well powered for <strong>treatment effect</strong> but cannot detect <strong>reactivity</strong> or <strong>moderation</strong> effects</li>
 <li><strong>Mixed</strong> designs are very risky! Can trigger measurement reactivity, biasing treatment effects</li>
 <li><strong>Solomon ANOVA</strong> can detect measurement reactivity, but less powerfully than planned missing approaches, and cannot detect moderation</li>
-<li><strong>Planned missing</strong> designs simulatenously solve these problems:
+<li><strong>Planned missing</strong> designs with auxiliary variables simultaneously address these problems:
 <ul>
 <li>Test whether measurement reactivity is present, and if so</li>
-<li>Recover valid treatment effects in the absence of pretest measurement</li>
-<li>Permit varying levels of treatment effect by baseline/trait ability (moderation)</li>
+<li>Recover unbiased treatment effects</li>
+<li>Permit varying levels of treatment effect by baseline/trait ability (moderation)
+<ul>
+<li>Power weak at this <span class="math inline">\(N\)</span> + effect size (more informative <span class="math inline">\(A\)</span> might help), but recovery unbiased</li>
+</ul></li>
+<li>ML (as implemented) less consistent than MI or Bayes</li>
 </ul></li>
 </ul>
+</div>
 </section>
 <section id="next-steps" class="slide level2">
 <h2>Next Steps</h2>
@@ -485,11 +506,9 @@ A_{ik} \sim N(0, 1), \qquad
 <li>Would more informative auxiliary variables pull it closer to the between subjects design for estimating the treatment effect?</li>
 </ul></li>
 <li>Vary <span class="math inline">\(N\)</span> and allocations across conditions</li>
-<li>Vary effect sizes of interest <span class="math inline">\(\beta_1\)</span>, <span class="math inline">\(\beta_3\)</span>, <span class="math inline">\(\beta_5\)</span>, and <span class="math inline">\(\beta_7\)</span></li>
-<li>Consider assumptions and violations
-<ul>
-<li>What if <span class="math inline">\(A\)</span> impacts <span class="math inline">\(Y_1\)</span> or <span class="math inline">\(Y_2\)</span>?</li>
-</ul></li>
+<li>Vary effect sizes of interest <span class="math inline">\(\beta_1\)</span>, <span class="math inline">\(\beta_3\)</span>, <span class="math inline">\(\beta_5\)</span>, <span class="math inline">\(\beta_6\)</span> and <span class="math inline">\(\beta_7\)</span></li>
+<li>See if ML is fixable</li>
+<li>Consider assumptions and violations</li>
 </ul>
 </section>
 <section class="slide level2">
@@ -502,20 +521,65 @@ Thank you!
 <p><a href="mailto:mhimmelstein3@gatech.edu">mhimmelstein3@gatech.edu</a></p>
 <p><img data-src="qr_himmelstein_budescu_helmer.png" class="nostretch" style="margin-top: 0.5em;" width="300"></p>
 <p><strong>Slides</strong></p>
-</div><div class="column" style="width:55%;">
+</div><div class="column" style="width:60%;">
 <div style="display: flex; justify-content: center; gap: 60px; text-align: center;">
 <div>
-<p><img data-src="jess.png" class="nostretch" style="width: 240px; height: 240px; object-fit: cover; border-radius: 50%;"></p>
+<p><img data-src="jess.png" class="nostretch" style="width: 260px; height: 260px; object-fit: cover; border-radius: 50%;"></p>
 <p><strong>Jessica Helmer</strong><br>
 <span style="font-size: 0.8em;">Georgia Tech</span></p>
 </div>
 <div>
-<p><img data-src="david.jpg" class="nostretch" style="width: 240px; height: 240px; object-fit: cover; object-position: center 20%; border-radius: 50%;"></p>
+<p><img data-src="david.jpg" class="nostretch" style="width: 260px; height: 260px; object-fit: cover; object-position: center 20%; border-radius: 50%;"></p>
 <p><strong>David V. Budescu</strong><br>
 <span style="font-size: 0.8em;">Fordham University</span></p>
 </div>
 </div>
 </div></div>
+</section>
+<section id="appendix-comparison-with-solomon" class="slide level2">
+<h2>Appendix: Comparison with Solomon</h2>
+<div style="font-size: 0.8em;">
+<div class="columns">
+<div class="column" style="width:48%;">
+<p><strong>Drop <span class="math inline">\(Y_1\)</span> from analysis</strong></p>
+<p>(Solomon Four Group Design)</p>
+<p><span class="math display">\[
+P(Y_2 \mid \text{Pretest}, \text{Treatment})
+\]</span></p>
+<p><strong>Benefits:</strong></p>
+<ul>
+<li>Treatment effect without pretest (<span class="math inline">\(\beta_1\)</span>)</li>
+<li>Can test for measurement reactivity (<span class="math inline">\(\beta_5\)</span>)</li>
+</ul>
+<p><strong>Limitations:</strong></p>
+<ul>
+<li>Essentially between subjects analysis
+<ul>
+<li>Only based on <span class="math inline">\(\text{Pretest}_i = 0\)</span> subsample</li>
+<li>No more moderation</li>
+<li>Lose statistical power vs.&nbsp;between subjects design</li>
+</ul></li>
+</ul>
+</div><div class="column" style="width:50%;">
+<p><strong>Our goal: bring <span class="math inline">\(Y_1\)</span> back</strong> without measuring it directly</p>
+<p><span class="math display">\[
+P(Y_2 \mid Y_1, \text{Pretest}, \text{Treatment})
+\]</span></p>
+<p><strong>Benefits:</strong></p>
+<ul>
+<li>Estimate full measurement model (<span class="math inline">\(\beta_0\)</span> – <span class="math inline">\(\beta_7\)</span>)</li>
+<li>Greater power for treatment and reactivity effects</li>
+<li>Reintroduces moderation effects with baseline</li>
+</ul>
+<p><strong>Limitations</strong></p>
+<ul>
+<li>How do we estimate <span class="math inline">\(Y_1\)</span>?
+<ul>
+<li>Auxiliary variables + imputation model</li>
+</ul></li>
+</ul>
+</div></div>
+</div>
 </section>
 <section id="appendix-missing-data-methods" class="slide level2">
 <h2>Appendix: Missing Data Methods</h2>

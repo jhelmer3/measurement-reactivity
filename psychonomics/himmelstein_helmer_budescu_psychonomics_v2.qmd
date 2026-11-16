@@ -202,7 +202,7 @@ final_plot
   - Goal of treatment is not to test how treatment helps pretested students, but how it helps students in general (typically who would not be pretested)
   - Does the act of being pretested affect
     - Treatment of interest?
-    - Relationship between baseline and final score?
+    - How baseline moderates treatment effects?
 
 ::: {style="font-size: 0.9em;"}
 $$
@@ -214,7 +214,7 @@ $$
 \underbrace{\beta_4 (\text{Pretest}_i)}_{\substack{\text{Pretest Effect} \\ \text{in Control} \\ \text{at Mean} \\ \text{Baseline Score}}} 
 + \underbrace{\beta_5 (\text{Treatment}_i)(\text{Pretest}_i)}_{\substack{\text{Difference in Treatment Effect} \\ \text{from Pretest} \\ \text{at Mean Baseline Score} \\ \text{\textbf{(Measurement Reactivity)}}}}
 + \underbrace{\beta_6 (\text{Pretest}_i)(\text{Baseline}_i)}_{\substack{\text{Difference in Baseline Score Effect} \\ \text{per unit Change in Baseline Score} \\ \text{from Pretest} \\ \text{in Control}}}
-+ \underbrace{\beta_7 (\text{Treatment}_i)(\text{Pretest}_i)(\text{Baseline}_i)}_{\substack{\text{Difference in Treatment Effect} \\ \text{per unit Change in Baseline Score} \\ \text{from Pretest}}}
++ \underbrace{\beta_7 (\text{Treatment}_i)(\text{Pretest}_i)(\text{Baseline}_i)}_{\substack{\text{Difference in Treatment Effect} \\ \text{per unit Change in Baseline Score} \\ \text{from Pretest} \\ \text{\textbf{(Measurement Reactivity on Moderation)}}}}
 $$
 :::
 :::
@@ -341,13 +341,14 @@ $$
 + \underbrace{\beta_5 (\text{Treatment}_i)(\text{Pretest}_i)}_{\substack{\text{Difference in Treatment Effect} \\ \text{from Pretest} \\ \text{\textbf{(Measurement Reactivity)}}}}
 $$
 
-  - Identifies but does not correct for measurement reactivity when present
+  - Less powerful than between subjects design
+  - Impossible to capture moderation effects
 
 **New Contribution:** Planned missing data design
 
 - Collect auxiliary variables
 - Impute missing $\text{Baseline}_i$ values
-- Identifies **and** corrects for measurement reactivity
+- Recover power and moderation?
 
 :::
  
@@ -374,79 +375,30 @@ $$P(M = 1 \mid Y_{obs}, Y_{mis}) = P(M = 1 \mid Y_{obs})$$
 **Measurement reactivity:** the posttest depends on *whether* baseline was measured
 
 $$
-P(Y_2 \mid Y_1, M_1 = 1) \neq P(Y_2 \mid Y_1, M_1 = 0)
+P(Y_2 \mid Y_{1, mis}, M_1 = 1) \neq P(Y_2 \mid Y_{1, obs}, M_1 = 0)
+$$
+
+Which implies:
+
+$$
+P(M_1 = 1 \mid Y_2, Y_{1, obs}, Y_{1, mis}) \neq P(M_1 = 1 \mid Y_2, Y_{1, obs})
 $$
 
 So we must separately model: 
 
-- $P(Y_2 \mid Y_1, M_1 = 0)$ 
-- $P(Y_2 \mid Y_1, M_1 = 1)$ (How???)
+- $P(Y_2 \mid Y_{1,obs}, M_1 = 0)$ 
+- $P(Y_2 \mid Y_{1,mis}, M_1 = 1)$ (How???)
 :::
 
 ::::
 
-**Planned missingness:** randomize $M_1$ (the Pretest condition) independently of $Y_1$
-
-- Conditioning on the observed Pretest condition makes $Y_1$ ignorable:
+**Planned missingness:** **make mechanism (C)MAR** by randomizing $M_1$ independently of everything measured *before* treatment. 
 
 $$
-P(M_1 = 1 \mid Y_1, Y_2, \text{Pretest}) = P(M_1 = 1 \mid \text{Pretest})
+P(M_1 = 1 \mid Y_2, Y_{1, obs}, Y_{1, mis}, \text{Pretest}) = P(M_1 = 1  \mid Y_{1, obs}, Y_2, \text{Pretest})
 $$
 
-- Baseline ($Y_1$) is **(C)MAR by design**
-
-:::
-
-## What Can We Do?
-
-::: {style="font-size: 0.8em;"}
-
-:::: {.columns}
-
-::: {.column width="48%"}
-
-**Measure $Y_1$ only when $\text{Pretest}_i = 1$** 
-
-(Solomon Four Group Design)
-
-$$
-P(Y_2 \mid \text{Pretest}, \text{Treatment})
-$$
-
-**Benefits:**
-
-- Treatment effect without pretest ($\beta_1$)
-- Can test for measurement reactivity ($\beta_5$)
-
-**Limitations:**
-
-- Essentially between subjects analysis  
-  - Only based on $\text{Pretest}_i = 0$ subsample 
-  - No more moderation
-  - Lose statistical power vs. between subjects design
-  
-:::
-
-::: {.column width="50%"}
-**Our goal: bring $Y_1$ back**
-
-$$
-P(Y_2 \mid Y_1, \text{Pretest}, \text{Treatment})
-$$
-
-**Benefits:**
-
-- Estimate full measurement model ($\beta_0$ – $\beta_7$)
-- Greater power for treatment and reactivity effects
-- Reintroduces moderation effects with baseline
-
-**Limitations**
-
-- How do we estimate $Y_1$?
-
-:::
-
-::::
+- **Then:** find a way to impute missing $Y_1$ from pre-treatment information, and model $P(Y_2 \mid Y_1, M_1)$
 
 :::
 
@@ -468,7 +420,7 @@ P(Y_2, Y_1 \mid A, \text{Pretest}, \text{Treatment})
 $$
 
 - $P(Y_1 \mid A)$ is the same in both Pretest groups, so the pretested group shows how $A$ predicts $Y_1$
-- Missing $Y_1$ are drawn from plausible values given **both** $A$ and $Y_2$:
+- Missing (unpretested group) $Y_1$ are drawn from plausible values given **both** $A$ and $Y_2$:
 
 $$
 P(Y_{1,\text{mis}} \mid Y_2, A, \text{Pretest}, \text{Treatment}) \;\propto\;
@@ -1287,6 +1239,7 @@ $$
 - $N =$ `r sim$settings$N`, $K =$ `r sim$settings$K` auxiliary variables, $R^2_{A} =$ `r with(sim$settings, round(K / (K + sigma_baseline^2), 2))`
 - $P(\text{Pretest}_i = 1) =$ `r round(sim$settings$p_pretest, 2)`, $P(\text{Treatment}_i = 1) =$ `r sim$settings$p_treatment`
 - `r with(as.list(sim$betas_fixed), sprintf("$\\beta_0 = %s,\\ \\beta_1 = %s,\\ \\beta_2 = %s,\\ \\beta_3 = %s,\\ \\beta_4 = %s,\\ \\beta_6 = %s$", beta0, beta1, beta2, beta3, beta4, beta6))`
+  - **$\beta_1$ implies medium treatment effect, $\beta_3$ implies baseline offsets treatment**
 - **Crossed:** `r sprintf("$\\beta_5 \\in \\{%s\\} \\times \\beta_7 \\in \\{%s\\}$", paste(sim$vary$beta5, collapse = ", "), paste(sim$vary$beta7, collapse = ", "))`
 - `r nrow(sim$conditions)` conditions, `r sim$settings$n_reps` replications each
 
@@ -1312,31 +1265,9 @@ $$
 :::
 
 
-## Detecting Reactivity
-
-$\beta_5$: Treatment $\times$ Pretest, pretest moderating treatment effect
-
-```{r}
-#| echo: false
-#| fig-width: 16
-#| fig-height: 6
-#| out-width: 100%
-plot_rq(sim, "beta5")
-```
-
-## Moderated Reactivity
-
-$\beta_7$: Treatment $\times$ Pretest $\times$ Baseline, pretest moderating moderation effect
-
-```{r}
-#| echo: false
-#| fig-width: 16
-#| fig-height: 6
-#| out-width: 100%
-plot_rq(sim, "beta7")
-```
-
 ## Recovery of Treatment
+
+::: {style="font-size: 0.8em;"}
 
 $\beta_1$: Treatment effect without a pretest, the effect we want to generalize
 
@@ -1348,7 +1279,34 @@ $\beta_1$: Treatment effect without a pretest, the effect we want to generalize
 plot_rq(sim, "beta1")
 ```
 
+- All methods except mixed, which is biased under measurement reactivity, recover treatment
+
+:::
+
+
+## Detecting Reactivity
+
+::: {style="font-size: 0.8em;"}
+
+$\beta_5$: Treatment $\times$ Pretest, pretest moderating treatment effect
+
+```{r}
+#| echo: false
+#| fig-width: 16
+#| fig-height: 6
+#| out-width: 100%
+plot_rq(sim, "beta5")
+```
+
+
+
+- Between and mixed designs **cannot** detect reactivity, planned missing designs with auxiliary variables do so more powerfully than Solomon
+
+:::
+
 ## Recovery of Moderation
+
+::: {style="font-size: 0.8em;"}
 
 $\beta_3$: Treatment moderated by baseline score without a pretest
 
@@ -1360,21 +1318,48 @@ $\beta_3$: Treatment moderated by baseline score without a pretest
 plot_rq(sim, "beta3")
 ```
 
+- Between and Solomon can't detect moderation, mixed is biased under measurement reactivity
+
+:::
+
+
+
+## Moderated Reactivity
+
+::: {style="font-size: 0.8em;"}
+
+$\beta_7$: Treatment $\times$ Pretest $\times$ Baseline, pretest moderating moderation effect
+
+```{r}
+#| echo: false
+#| fig-width: 16
+#| fig-height: 6
+#| out-width: 100%
+plot_rq(sim, "beta7")
+```
+
+- **Only** planned missing designs with auxiliary variables can detect measurement reactivity on moderation (unbiased, but poor power)
+
+:::
+
 
 
 ## Take Home
 
 
+::: {style="font-size: 0.95em;"}
 
-- **Between subjects** designs are well powered for **treatment effect** but cannot detect reactivity or moderation effects
+- **Between subjects** designs are well powered for **treatment effect** but cannot detect **reactivity** or **moderation** effects
 - **Mixed** designs are very risky! Can trigger measurement reactivity, biasing treatment effects
 - **Solomon ANOVA** can detect measurement reactivity, but less powerfully than planned missing approaches, and cannot detect moderation
-- **Planned missing** designs simulatenously solve these problems:
+- **Planned missing** designs with auxiliary variables simultaneously address these problems:
   - Test whether measurement reactivity is present, and if so
-  - Recover valid treatment effects in the absence of pretest measurement
+  - Recover unbiased treatment effects
   - Permit varying levels of treatment effect by baseline/trait ability (moderation)
+    - Power weak at this $N$ + effect size (more informative $A$ might help), but recovery unbiased
+  - ML (as implemented) less consistent than MI or Bayes
 
-
+:::
 
 ## Next Steps
 
@@ -1382,15 +1367,15 @@ plot_rq(sim, "beta3")
   - How sensitive is the planned missing approach to the informativeness of auxiliary variables?
   - Would more informative auxiliary variables pull it closer to the between subjects design for estimating the treatment effect?
 - Vary $N$ and allocations across conditions
-- Vary effect sizes of interest $\beta_1$, $\beta_3$, $\beta_5$, and $\beta_7$
+- Vary effect sizes of interest $\beta_1$, $\beta_3$, $\beta_5$, $\beta_6$ and $\beta_7$
+- See if ML is fixable
 - Consider assumptions and violations
-  - What if $A$ impacts $Y_1$ or $Y_2$?
-  
+
 ---
 
 :::::: {.columns style="display: flex; align-items: center; height: 600px;"}
 
-::::: {.column width="45%" style="text-align: center;"}
+::::: {.column width="40%" style="text-align: center;"}
 
 <h2 style="font-size: 2.6em; margin-bottom: 0.3em;">Thank you!</h2>
 
@@ -1402,19 +1387,19 @@ plot_rq(sim, "beta3")
 
 :::::
 
-::::: {.column width="55%"}
+::::: {.column width="60%"}
 
 :::: {style="display: flex; justify-content: center; gap: 60px; text-align: center;"}
 
 ::: {}
-![](jess.png){.nostretch style="width: 240px; height: 240px; object-fit: cover; border-radius: 50%;"}
+![](jess.png){.nostretch style="width: 260px; height: 260px; object-fit: cover; border-radius: 50%;"}
 
 **Jessica Helmer**  
 [Georgia Tech]{style="font-size: 0.8em;"}
 :::
 
 ::: {}
-![](david.jpg){.nostretch style="width: 240px; height: 240px; object-fit: cover; object-position: center 20%; border-radius: 50%;"}
+![](david.jpg){.nostretch style="width: 260px; height: 260px; object-fit: cover; object-position: center 20%; border-radius: 50%;"}
 
 **David V. Budescu**  
 [Fordham University]{style="font-size: 0.8em;"}
@@ -1425,6 +1410,61 @@ plot_rq(sim, "beta3")
 :::::
 
 ::::::
+
+## Appendix: Comparison with Solomon
+
+::: {style="font-size: 0.8em;"}
+
+:::: {.columns}
+
+::: {.column width="48%"}
+
+**Drop $Y_1$ from analysis** 
+
+(Solomon Four Group Design)
+
+$$
+P(Y_2 \mid \text{Pretest}, \text{Treatment})
+$$
+
+**Benefits:**
+
+- Treatment effect without pretest ($\beta_1$)
+- Can test for measurement reactivity ($\beta_5$)
+
+**Limitations:**
+
+- Essentially between subjects analysis  
+  - Only based on $\text{Pretest}_i = 0$ subsample 
+  - No more moderation
+  - Lose statistical power vs. between subjects design
+  
+:::
+
+::: {.column width="50%"}
+**Our goal: bring $Y_1$ back** without measuring it directly
+
+$$
+P(Y_2 \mid Y_1, \text{Pretest}, \text{Treatment})
+$$
+
+**Benefits:**
+
+- Estimate full measurement model ($\beta_0$ – $\beta_7$)
+- Greater power for treatment and reactivity effects
+- Reintroduces moderation effects with baseline
+
+**Limitations**
+
+- How do we estimate $Y_1$?
+  - Auxiliary variables + imputation model
+
+:::
+
+::::
+
+:::
+
   
 ## Appendix: Missing Data Methods
 
