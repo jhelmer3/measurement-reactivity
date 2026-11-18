@@ -564,7 +564,7 @@
     "href": "psychonomics/himmelstein_helmer_budescu_psychonomics_v2.html#next-steps",
     "title": "Combatting Measurement Reactivity in Experimental Design and Inference",
     "section": "Next Steps",
-    "text": "Next Steps\n\nVary \\(R^2_A\\)\n\nHow sensitive is the planned missing approach to the informativeness of auxiliary variables?\nWould more informative auxiliary variables pull it closer to the between subjects design for estimating the treatment effect?\n\nVary \\(N\\) and allocations across conditions\nVary effect sizes of interest \\(\\beta_1\\), \\(\\beta_3\\), \\(\\beta_5\\), \\(\\beta_6\\) and \\(\\beta_7\\)\nSee if ML is fixable\nConsider assumptions and violations"
+    "text": "Next Steps\n\n\nVary \\(R^2_A\\)\n\nHow sensitive is the planned missing approach to the informativeness of auxiliary variables?\nWould more informative auxiliary variables pull it closer to the between subjects design for estimating the treatment effect?\n\nVary \\(N\\) and allocations across conditions\nVary effect sizes of interest \\(\\beta_1\\), \\(\\beta_3\\), \\(\\beta_5\\), \\(\\beta_6\\) and \\(\\beta_7\\)\nSee if ML is fixable\nConsider assumptions and violations\nFind real data applications\nExpand to other designs\n\nNo reason this is limited to a \\(2 \\times 2\\)\nPlanned missingness can theoretically address measurement reactivity any time its a problem and possible to collect auxiliaries"
   },
   {
     "objectID": "psychonomics/himmelstein_helmer_budescu_psychonomics_v2.html#solomon-1949-four-group-design",

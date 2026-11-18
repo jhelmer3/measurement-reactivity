@@ -1363,6 +1363,10 @@ plot_rq(sim, "beta7")
 
 ## Next Steps
 
+
+::: {style="font-size: 0.85em;"}
+
+
 - Vary $R^2_A$
   - How sensitive is the planned missing approach to the informativeness of auxiliary variables?
   - Would more informative auxiliary variables pull it closer to the between subjects design for estimating the treatment effect?
@@ -1370,6 +1374,12 @@ plot_rq(sim, "beta7")
 - Vary effect sizes of interest $\beta_1$, $\beta_3$, $\beta_5$, $\beta_6$ and $\beta_7$
 - See if ML is fixable
 - Consider assumptions and violations
+- **Find real data applications**
+- **Expand to other designs**
+  - No reason this is limited to a $2 \times 2$
+  - Planned missingness can theoretically address measurement reactivity any time its a problem and possible to collect auxiliaries
+
+::: 
 
 ---
 
