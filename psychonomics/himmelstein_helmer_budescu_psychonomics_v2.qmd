@@ -49,39 +49,53 @@ editor: source
 - **Control** 
 - **Treatment** 
 
-## Between Subjects Designs
+## Between vs. Mixed Designs
 
-- Simplest version of randomized design
-- Core model
+::: {style="font-size: 0.8em;"}
+
+:::: {.columns}
+
+::: {.column width="38%"}
+[Between Subjects]{.navy-color}
+
+Simplest randomized design
+
 
 $$
-\widehat{\text{Math Score}}_i =\;
-\underbrace{\beta_0}_{\substack{\text{Control} \\ \text{Score}}}
-+ \underbrace{\beta_1 (\text{Treatment}_i)}_{\substack{\text{Treatment} \\ \text{Effect}}}
+\begin{aligned}
+\widehat{\text{Math Score}}_i =\;&
+\underbrace{\beta_0}_{\substack{\text{Control} \\ \text{Score}}} \\[1.5em]
+&+ \underbrace{\beta_1 (\text{Treatment}_i)}_{\substack{\text{Treatment} \\ \text{Effect}}}
+\end{aligned}
 $$
 
-Limitations
 
-- Statistical power
-- Does not allow for treatment effect to vary as a function of baseline ability (moderation)
+- Less statistical power
+- Treatment effect can't vary with baseline ability (no moderation)
+:::
 
-## Mixed Designs
+::: {.column width="62%"}
+[Mixed (Pretest–Posttest)]{.navy-color}
 
-::: {style="font-size: 0.95em;"}
+Adds a pretest measurement of baseline
 
-
-- Adds pretest measurement
-- Controlling for baseline score improves power
-- Allows for moderation
-  - Do people who start worse at math benefit more from the treatment?
-  
 $$
-\widehat{\text{Math Score}}_i =\;
+\begin{aligned}
+\widehat{\text{Math Score}}_i =\;&
 \underbrace{\beta_0}_{\substack{\text{Control Score} \\ \text{at Mean} \\ \text{Baseline Score}}}
-+ \underbrace{\beta_1 (\text{Treatment}_i)}_{\substack{\text{Treatment Effect} \\ \text{at Mean} \\ \text{Baseline Score}}} \\[2.5em]
-+ \underbrace{\beta_2 (\text{Baseline}_i)}_{\substack{\text{Base Score Effect} \\ \text{in Control}}}
-+ \underbrace{\beta_3 (\text{Treatment}_i)(\text{Baseline}_i)}_{\substack{\text{Difference in Treatment Effect} \\ \text{per unit Change in Base Score} }}
++ \underbrace{\beta_1 (\text{Treatment}_i)}_{\substack{\text{Treatment Effect} \\ \text{at Mean} \\ \text{Baseline Score}}} \\[1.5em]
+&+ \underbrace{\beta_2 (\text{Baseline}_i)}_{\substack{\text{Baseline Score Effect} \\ \text{in Control}}}
++ \underbrace{\beta_3 (\text{Treatment}_i)(\text{Baseline}_i)}_{\substack{\text{Difference in Treatment Effect} \\ \text{per unit Change in Baseline Score}}}
+\end{aligned}
 $$
+
+- Controlling for baseline improves power
+- Allows moderation: do people who start worse at math benefit more?
+- But there is a hidden risk!
+
+:::
+
+::::
 
 :::
 
